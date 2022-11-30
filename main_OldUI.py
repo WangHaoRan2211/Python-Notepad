@@ -7,7 +7,6 @@ from tkinter.ttk import *
 import os
 from tkinter import SEL_FIRST
 import webbrowser as wb
-from sv_ttk import *
 from sys import argv
 
 save = False
@@ -26,44 +25,11 @@ def save_as():
     win.title('记事本-' + path + '-Snapshot(22w47a)')
 
 
-def toggle_theme():
-    if get_theme() == 'dark' or get_theme() == 'light':
-        return get_theme
-    else:
-        showerror('错误', '当前没有使用太阳谷主题，已自动切换为浅色主题，请自行选择主题。')
-        return 'light'
 
 
-def themeWindow():
-    root = Toplevel(win)
-    root.iconbitmap('Icon.ico')
-    root.title('更改主题')
-    root.geometry('100x75')
-    root.resizable(False, False)
-    v1 = IntVar()
-    with open('data/theme.ini', 'r+', encoding='utf-8') as th:
-        if th.read() == '':
-            th.write('theme=1')
-        else:
-            if th.read() == 'theme=1':
-                v1 = 1
-            else:
-                v1 = 2
-    e2 = Radiobutton(root, variable=v1, value=1, text='浅色', command=use_light_theme)
-    e2.grid(row=1, column=0)
-    e3 = Radiobutton(root, variable=v1, value=2, text='暗色', command=use_dark_theme)
-    e3.grid(row=2, column=0)
-    with open('data/theme.ini', 'r+', encoding='utf-8') as th2:
-        th2.write('theme=' + str(v1))
-    win.mainloop()
 
 
-def theme():
-    global v1
-    if v1.get() == 'auto':
-        set_theme(toggle_theme())
-    else:
-        set_theme(v1)
+
 
 
 def save():
@@ -275,15 +241,7 @@ def command_run(command):
         file = open(filePath, encoding=fileEncode)
         text1.insert(1.0, file.read())
         file.close()
-    if command == 'set-theme' or command == '/set-theme' or command == '--set-theme' or command == '-ST':
-        #print(argv[2])
-        if not (argv[2]=='dark' or argv[2]=='light'):
-            raise SyntaxError('错误:你输入了一个不存在的主题,请输入dark或light')
-            #print('错误:你输入了一个不存在的主题,请输入dark或light')
-        set_theme(argv[2])
-
-
-        if command == 'run':
+    if command == 'run':
             return
 
 
@@ -297,9 +255,6 @@ def command_help():
 filePath:打开的文件路径(可以是相对路径或绝对路径)  Encoding:打开的文件使用编码(默认UTF-8)
 
 /help、--help、-H、help:说明窗口  使用方法:python main.py --help
-
-/set-theme、--set-theme、-ST、set-theme:以自定义的主题启动记事本  使用方法:python main.py --set-theme {ThemeName}
-ThemeName:主题名字(可选light或dark)
 
 
 {ValueName}:必填项              [ValueName]:选填项
@@ -355,7 +310,6 @@ menu1_1.add_command(label='关闭', command=win.quit, accelerator='Alt+F4')
 menu2_1 = Menu(menu1, tearoff=False)
 menu1.add_cascade(label='设置', menu=menu2_1)
 menu2_1.add_command(label='字体', command=mainwindow)
-menu2_1.add_command(label='主题', command=themeWindow)
 menu2_1.add_command(label='一键运行批处理文件', command=run_batfile)
 menu2_1.add_separator()
 menu2_1.add_command(label='复制', command=copy, accelerator='Ctrl+C')
@@ -383,9 +337,6 @@ if len(argv)>1:
     if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
         win.quit()
         command_help()
-
-
-set_theme('light')
 
 
 win.mainloop()
