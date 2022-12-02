@@ -9,7 +9,7 @@ from tkinter import SEL_FIRST
 import webbrowser as wb
 from sv_ttk import *
 from sys import argv
-
+from tkinter.font import Font
 save = False
 filetype = [('文本文件', '*.txt'), ('Python文件', '*.py *.pyw'), ('C语言文件', '*.c *.cpp *.cs'), ('Cmd文件', '*.cmd *.bat'),
             ('HTML文件', '*.htm *.html'), ('注册表文件', '*.reg'), ('所有文件', '*.*')]
@@ -76,7 +76,7 @@ def save():
 
 def new():
     text1.delete(1.0, END)
-    win.title('无标题-Snapshot(22w48a)')
+    win.title('无标题')
     save = False
 
 
@@ -84,7 +84,7 @@ def open_file():
     save = True
     s = askopenfile(defaultextension='.txt', filetypes=filetype, title='打开')
     path = s.name
-    win.title('记事本-' + path + '-Snapshot(22w48a)')
+    win.title('记事本-' + path + '')
     text1.delete(1.0, END)
     file = open(path, encoding='utf-8')
     text1.insert(1.0, file.read())
@@ -97,17 +97,33 @@ def open_file():
 
 
 
-def search_baidu(searchName,Searchwz='百度'):
+def search(searchName,Searchwz='百度'):
     if Searchwz=='必应':
         wb.open('https://cn.bing.com/search?q='+searchName)
     elif Searchwz=='百度':
         wb.open('https://www.baidu.com/s?wd='+searchName)
+    elif Searchwz=='搜狗':
+        wb.open('https://www.sogou.com/web?query='+searchName)
+    elif Searchwz=='360':
+        wb.open('https://www.so.com/s?ie=utf-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q='+searchName)
+    elif Searchwz=='哔哩哔哩':
+        wb.open('https://search.bilibili.com/all?keyword='+searchName)
+    elif Searchwz=='百度贴吧':
+        wb.open('https://tieba.baidu.com/f/search/res?ie=utf-8&qw='+searchName)
 
 
 
 
-
-
+def color():
+    for i in range(1,500):
+        text1.tag_add('1',text1.search(')',0.0))
+        text1.tag_config('1',foreground='blue')
+    text1.tag_add('1', text1.search('(', 0.0))
+    text1.tag_config('1', foreground='blue')
+    text1.tag_add('2', text1.search('"', 0.0))
+    text1.tag_config('2', foreground='green')
+    text1.tag_add('2', text1.search('\'', 0.0))
+    text1.tag_config('2', foreground='green')
 
 
 
@@ -201,11 +217,14 @@ def mainwindow():
 
 
 def apply(b, s, c2=0):
+    bold_font = Font(family=b,size=s,weight="bold")
+    _font = Font(family=b, size=s)
+    text1.tag_configure("BOLD", font=bold_font)
     if c2 == 0:
-        Font = '%s %s' % (b, s)
+        text1.config(font=_font)
     else:
-        Font = '%s %s bold' % (b, s)
-    text1.config(font=Font)
+        text1.config(font=bold_font)
+
 
 
 def about():
@@ -242,22 +261,6 @@ def select_all():
     text1.tag_add("sel", "1.0", "end")
 
 
-def update_log():
-    logtitle = '''22w48a更新 '''
-    log = '''大更新:
-\t1.添加了命令系统，现在支持help、open、set-theme三种命令。
-\t2.添加了右键菜单
-小更新:
-\t1.添加剪切、撤销、恢复功能'''
-    win3 = Tk()
-    win3.title('Update Log')
-    win3.iconbitmap('Icon.ico')
-    win3.resizable(False, False)
-    ul1 = Label(win3, text=logtitle, font='华文楷体 19 bold')
-    ul1.pack()
-    ul2 = Label(win3, text=log, font='华文楷体 14')
-    ul2.pack(padx=45)
-    win3.mainloop()
 
 
 def command_run(command):
@@ -270,7 +273,7 @@ def command_run(command):
         else:
             fileEncode = argv[3]
         save = True
-        win.title('记事本-' + filePath + '-Snapshot(22w48a)')
+        win.title('记事本-' + filePath)
         text1.delete(1.0, END)
         file = open(filePath, encoding=fileEncode)
         text1.insert(1.0, file.read())
@@ -286,6 +289,24 @@ def command_run(command):
         if command == 'run':
             return
 
+
+
+def update_log():
+    logtitle = '''1.2-pre1更新 '''
+    log = '''更新:
+\t1.优化了菜单排列
+\t2.添加了删除，搜索功能
+\t3.为右键菜单增加了更多功能
+'''
+    win3 = Tk()
+    win3.title('Update Log')
+    win3.iconbitmap('Icon.ico')
+    win3.resizable(False, False)
+    ul1 = Label(win3, text=logtitle, font='华文楷体 19 bold')
+    ul1.pack()
+    ul2 = Label(win3, text=log, font='华文楷体 14')
+    ul2.pack(padx=45)
+    win3.mainloop()
 
 
 
@@ -318,8 +339,37 @@ def set_icon():
 
 
 
+
+
+
+
+
+
+def set_search_window():
+    global s1
+    w4=Toplevel()
+    w4.title('搜索引擎设置')
+    englist=('百度','必应','搜狗','360')
+    c2=OptionMenu(w4,s1,*englist)
+    #c2.set(1)
+    c2.pack(ipadx=59)
+    bn = Button(w4,text='应用',command=w4.quit)
+    bn.pack()
+    w4.mainloop()
+
+
+
+
+def set_engine(name):
+    global s1
+
+    search(Searchwz=str(s1),searchName=name)
+
+
+
+
 win = Tk()
-win.title('记事本-无标题-Snapshot(22w48a)')
+win.title('记事本-无标题')
 win.iconbitmap('Icon.ico')
 win.geometry('700x590')
 
@@ -331,15 +381,19 @@ scr.pack(side=RIGHT, fill=Y)
 scr.config(command=text1.yview)
 text1.config(yscrollcommand=scr.set)
 
+s1=StringVar()
+s1='百度'
+
 
 menu_right = Menu(win,tearoff=False)
 menu_right.add_cascade(label='复制', command=copy)
 menu_right.add_cascade(label='粘贴', command=paste)
 menu_right.add_cascade(label='全选', command=select_all)
-'''menu_right.add_cascade(label='Search', command=lambda:search_baidu(text1.get(SEL_FIRST,SEL_LAST)))
+menu_right.add_cascade(label='Delete',command=lambda:text1.delete(SEL_FIRST,SEL_LAST))
+menu_right.add_cascade(label='Search', command=lambda:set_engine(text1.get(SEL_FIRST,SEL_LAST)))
 menu_right.add_separator()
+menu_right.add_command(label='Run Bat File',command=run_batfile)
 menu_right.add_command(label='Close Window',command=win.quit)
-menu_right.add_command(label='run bat file',command=run_batfile)'''
 showPopoutMenu(text1, menu_right)
 
 
@@ -352,29 +406,41 @@ menu1_1.add_command(label='另存为', command=save_as)
 menu1_1.add_command(label='打开', command=open_file)
 menu1_1.add_separator()
 menu1_1.add_command(label='关闭', command=win.quit, accelerator='Alt+F4')
-menu2_1 = Menu(menu1, tearoff=False)
-menu1.add_cascade(label='设置', menu=menu2_1)
-menu2_1.add_command(label='字体', command=mainwindow)
-menu2_1.add_command(label='主题', command=themeWindow)
-menu2_1.add_command(label='一键运行批处理文件', command=run_batfile)
-menu2_1.add_separator()
+menu2_1=Menu(menu1,tearoff=False)
+menu1.add_cascade(label='编辑',menu=menu2_1)
 menu2_1.add_command(label='复制', command=copy, accelerator='Ctrl+C')
 menu2_1.add_command(label='剪切', command=cut, accelerator='Ctrl+X')
 menu2_1.add_command(label='粘贴', command=paste, accelerator='Ctrl+V')
 menu2_1.add_command(label='全选', command=select_all, accelerator='Ctrl+A')
+menu2_1.add_command(label='Delete',command=lambda:text1.delete(SEL_FIRST,SEL_LAST),accelerator='Backspace')
+menu2_1.add_command(label='Color', command=color)
 menu2_1.add_separator()
 menu2_1.add_command(label='撤销', command=undo)
 menu2_1.add_command(label='恢复', command=redo)
-'''menu3_1 = Menu(menu1,tearoff=False)
-menu1.add_cascade(label='Window',menu=menu3_1)
-menu3_1.add_command(label='Zoomed',command=lambda:win.state('zoomed'))
-menu3_1.add_command(label='Minimize',command=win.iconify)
-menu3_1.add_command(label='Set Main Window Icon',command=set_icon)'''
-menu4_1 = Menu(menu1, tearoff=False)
-menu1.add_cascade(label='关于', menu=menu4_1)
-menu4_1.add_command(label='关于记事本', command=about)
-menu4_1.add_command(label='更新日志', command=update_log)
-menu4_1.add_command(label='命令说明', command=command_help)
+menu3_1 = Menu(menu1, tearoff=False)
+menu1.add_cascade(label='设置', menu=menu3_1)
+menu3_1.add_command(label='字体', command=mainwindow)
+menu3_1.add_command(label='主题', command=themeWindow)
+menu3_1.add_command(label='一键运行批处理文件', command=run_batfile)
+#menu3_1.add_command(label='Set Search Engine',command=set_search_window)
+menu4_1 = Menu(menu1,tearoff=False)
+menu1.add_cascade(label='Window',menu=menu4_1)
+menu4_1.add_command(label='Zoomed',command=lambda:win.state('zoomed'))
+menu4_1.add_command(label='Minimize',command=win.iconify)
+menu4_1.add_command(label='Set Main Window Icon',command=set_icon)
+'''menu5_1 = Menu(menu1, tearoff=False)
+ menu1.add_cascade(label='搜索', menu=menu5_1)'''
+menu6_1 = Menu(menu1, tearoff=False)
+'''menu5_1.add_command(label='百度',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='百度'))
+menu5_1.add_command(label='必应',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='必应'))
+menu5_1.add_command(label='搜狗',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='搜狗'))
+menu5_1.add_command(label='360',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='360'))
+menu5_1.add_command(label='哔哩哔哩',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='哔哩哔哩'))
+menu5_1.add_command(label='百度贴吧',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='百度贴吧'))'''
+menu1.add_cascade(label='关于', menu=menu6_1)
+menu6_1.add_command(label='关于记事本', command=about)
+menu6_1.add_command(label='更新日志', command=update_log)
+menu6_1.add_command(label='命令说明', command=command_help)
 win.config(menu=menu1)
 
 
@@ -383,6 +449,9 @@ if len(argv)>1:
     if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
         win.quit()
         command_help()
+
+
+
 
 
 set_theme('light')
