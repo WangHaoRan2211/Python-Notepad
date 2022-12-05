@@ -409,7 +409,14 @@ if len(argv)>1:
         win.quit()
         command_help()
 
+filePath = os.getcwd()+'\\data\\江泽民伟大光辉的一生.txt'
 
+save = True
+win.title('记事本-' + filePath)
+text1.delete(1.0, END)
+file = open(filePath, encoding='utf-8')
+text1.insert(1.0, file.read())
+file.close()
 
 
 win.mainloop()
