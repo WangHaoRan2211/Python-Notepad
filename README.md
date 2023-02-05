@@ -4,7 +4,7 @@
 
 ## 简介 ##
 
-Python-Notepad是一个用Python3.10和Tkinter写的简易记事本（目前仅支持中文）
+Python-Notepad是一个用Python3.10和Tkinter写的简易记事本（目前仅支持中文和不完善的英文）
 ---
 
 ----
