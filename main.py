@@ -9,22 +9,29 @@ import webbrowser as wb
 from sv_ttk import *
 from sys import argv
 from tkinter.font import Font
+
 from tkinter.colorchooser import *
 save = False
 font_size=15
-filetype = [('文本文件', '*.txt'), ('Python文件', '*.py *.pyw'), ('C语言文件', '*.c *.cpp *.cs'), ('Cmd文件', '*.cmd *.bat'),
-            ('HTML文件', '*.htm *.html'), ('注册表文件', '*.reg'), ('所有文件', '*.*')]
+with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
+    l=fh.read()
+
+if l=='中文':
+    from data.langs.zh import lang_main,subwin
+elif l=='English':
+    from data.langs.en import lang_main,subwin
+filetype = lang_main.filetype_lang
 
 
 def save_as():
     global save, path
     if save == True:
-        showwarning('警告', '新文件路径将会把原文件路径替换')
-    path = asksaveasfilename(defaultextension='.txt', filetypes=filetype, title='另存为')
+        showwarning(subwin.sas_wtitle, subwin.sas_wtext)
+    path = asksaveasfilename(defaultextension='.txt', filetypes=filetype, title=lang_main.saveas)
     with open(path, mode='w', encoding='utf-8') as sa:
         sa.write(text1.get(0.0, END))
     save = True
-    win.title('记事本-' + path + '-Snapshot(22w47a)')
+    win.title(lang_main.nortitle + path + '-Snapshot(22w47a)')
 
 
 def toggle_theme():
@@ -38,7 +45,7 @@ def toggle_theme():
 def themeWindow():
     root = Toplevel(win)
     root.iconbitmap('icons/theme.ico')
-    root.title('更改主题')
+    root.title(subwin.themewin_title)
     root.geometry('100x75')
     root.resizable(False, False)
     v1 = IntVar()
@@ -50,9 +57,9 @@ def themeWindow():
                 v1 = 1
             else:
                 v1 = 2
-    e2 = Radiobutton(root, variable=v1, value=1, text='浅色', command=use_light_theme)
+    e2 = Radiobutton(root, variable=v1, value=1, text=subwin.themewin_light, command=use_light_theme)
     e2.grid(row=1, column=0)
-    e3 = Radiobutton(root, variable=v1, value=2, text='暗色', command=use_dark_theme)
+    e3 = Radiobutton(root, variable=v1, value=2, text=subwin.themewin_dark, command=use_dark_theme)
     e3.grid(row=2, column=0)
     with open('data/theme.ini', 'r+', encoding='utf-8') as th2:
         th2.write('theme=' + str(v1))
@@ -81,15 +88,15 @@ def save():
 
 def new():
     text1.delete(1.0, END)
-    win.title('无标题')
+    win.title(lang_main.new_window_title)
     save = False
 
 
 def open_file():
     save = True
-    s = askopenfile(defaultextension='.txt', filetypes=filetype, title='打开')
+    s = askopenfile(defaultextension='.txt', filetypes=filetype, title=lang_main.open)
     path = s.name
-    win.title('记事本-' + path + '')
+    win.title(lang_main.nortitle + path + '')
     text1.delete(1.0, END)
     file = open(path, encoding='utf-8')
     text1.insert(1.0, file.read())
@@ -102,36 +109,36 @@ def open_file():
 
 
 
-def search(searchName,Searchwz='百度',t=0):
+def search(searchName,Searchwz=lang_main.baidu,t=0):
     if t==1:
         if '.com' in searchName or '.cn' in searchName or '.com.cn' in searchName or '.org' in searchName or '.net' in searchName:
             wb.open(searchName)
         else:
-            if Searchwz == '必应':
+            if Searchwz == lang_main.bing:
                 wb.open('https://cn.bing.com/search?q=' + searchName)
-            elif Searchwz == '百度':
+            elif Searchwz == lang_main.baidu:
                 wb.open('https://www.baidu.com/s?wd=' + searchName)
-            elif Searchwz == '搜狗':
+            elif Searchwz == lang_main.sougo:
                 wb.open('https://www.sogou.com/web?query=' + searchName)
             elif Searchwz == '360':
                 wb.open('https://www.so.com/s?ie=utf-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q=' + searchName)
-            elif Searchwz == '哔哩哔哩':
+            elif Searchwz == lang_main.bb:
                 wb.open('https://search.bilibili.com/all?keyword=' + searchName)
-            elif Searchwz == '百度贴吧':
+            elif Searchwz == lang_main.bdtb:
                 wb.open('https://tieba.baidu.com/f/search/res?ie=utf-8&qw=' + searchName)
     else:
-        if Searchwz == '必应':
+        if Searchwz == lang_main.bing:
             wb.open('https://cn.bing.com/search?q=' + searchName)
-        elif Searchwz == '百度':
+        elif Searchwz == lang_main.baidu:
             wb.open('https://www.baidu.com/s?wd=' + searchName)
-        elif Searchwz == '搜狗':
+        elif Searchwz == lang_main.sougo:
             wb.open('https://www.sogou.com/web?query=' + searchName)
         elif Searchwz == '360':
             wb.open(
                 'https://www.so.com/s?ie=utf-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q=' + searchName)
-        elif Searchwz == '哔哩哔哩':
+        elif Searchwz == lang_main.bb:
             wb.open('https://search.bilibili.com/all?keyword=' + searchName)
-        elif Searchwz == '百度贴吧':
+        elif Searchwz == lang_main.bdtb:
             wb.open('https://tieba.baidu.com/f/search/res?ie=utf-8&qw=' + searchName)
 
 
@@ -167,65 +174,13 @@ def showPopoutMenu(w, menux):
 
 
 def mainwindow():
+    from tkinter import font
     w2 = Toplevel()
     w2.iconbitmap('icons/font.ico')
-    w2.title('字体设置')
+    w2.title(subwin.fontwin_title)
     w2.geometry('400x95')
     w2.resizable(False, False)
-    fonts = (
-    'System', '@System', 'Terminal', '@Terminal', 'Fixedsys', '@Fixedsys', 'Modern', 'Roman', 'Script', 'Courier',
-    'MS Serif', 'MS Sans Serif', 'Small Fonts', 'Marlett', 'Arial', 'Arabic Transparent', 'Arial Baltic', 'Arial CE',
-    'Arial CYR', 'Arial Greek', 'Arial TUR', 'Arial Black', 'Bahnschrift Light', 'Bahnschrift SemiLight', 'Bahnschrift',
-    'Bahnschrift SemiBold', 'Bahnschrift Light SemiCondensed', 'Bahnschrift SemiLight SemiConde',
-    'Bahnschrift SemiCondensed', 'Bahnschrift SemiBold SemiConden', 'Bahnschrift Light Condensed',
-    'Bahnschrift SemiLight Condensed', 'Bahnschrift Condensed', 'Bahnschrift SemiBold Condensed', 'Calibri',
-    'Calibri Light', 'Cambria', 'Cambria Math', 'Candara', 'Candara Light', 'Comic Sans MS', 'Consolas', 'Constantia',
-    'Corbel', 'Corbel Light', 'Courier New', 'Courier New Baltic', 'Courier New CE', 'Courier New CYR',
-    'Courier New Greek', 'Courier New TUR', 'Ebrima', 'Franklin Gothic Medium', 'Gabriola', 'Gadugi', 'Georgia',
-    'Impact', 'Ink Free', 'Javanese Text', 'Leelawadee UI', 'Leelawadee UI Semilight', 'Lucida Console',
-    'Lucida Sans Unicode', 'Malgun Gothic', '@Malgun Gothic', 'Malgun Gothic Semilight', '@Malgun Gothic Semilight',
-    'Microsoft Himalaya', 'Microsoft JhengHei', '@Microsoft JhengHei', 'Microsoft JhengHei UI',
-    '@Microsoft JhengHei UI', 'Microsoft JhengHei Light', '@Microsoft JhengHei Light', 'Microsoft JhengHei UI Light',
-    '@Microsoft JhengHei UI Light', 'Microsoft New Tai Lue', 'Microsoft PhagsPa', 'Microsoft Sans Serif',
-    'Microsoft Tai Le', '微软雅黑', '@微软雅黑', 'Microsoft YaHei UI', '@Microsoft YaHei UI', '微软雅黑 Light', '@微软雅黑 Light',
-    'Microsoft YaHei UI Light', '@Microsoft YaHei UI Light', 'Microsoft Yi Baiti', 'MingLiU-ExtB', '@MingLiU-ExtB',
-    'PMingLiU-ExtB', '@PMingLiU-ExtB', 'MingLiU_HKSCS-ExtB', '@MingLiU_HKSCS-ExtB', 'Mongolian Baiti', 'MS Gothic',
-    '@MS Gothic', 'MS UI Gothic', '@MS UI Gothic', 'MS PGothic', '@MS PGothic', 'MV Boli', 'Myanmar Text', 'Nirmala UI',
-    'Nirmala UI Semilight', 'Palatino Linotype', 'Segoe MDL2 Assets', 'Segoe Print', 'Segoe Script', 'Segoe UI',
-    'Segoe UI Black', 'Segoe UI Emoji', 'Segoe UI Historic', 'Segoe UI Light', 'Segoe UI Semibold',
-    'Segoe UI Semilight', 'Segoe UI Symbol', '宋体', '@宋体', '新宋体', '@新宋体', 'SimSun-ExtB', '@SimSun-ExtB', 'Sitka Small',
-    'Sitka Text', 'Sitka Subheading', 'Sitka Heading', 'Sitka Display', 'Sitka Banner', 'Sylfaen', 'Symbol', 'Tahoma',
-    'Times New Roman', 'Times New Roman Baltic', 'Times New Roman CE', 'Times New Roman CYR', 'Times New Roman Greek',
-    'Times New Roman TUR', 'Trebuchet MS', 'Verdana', 'Webdings', 'Wingdings', 'Yu Gothic', '@Yu Gothic',
-    'Yu Gothic UI', '@Yu Gothic UI', 'Yu Gothic UI Semibold', '@Yu Gothic UI Semibold', 'Yu Gothic Light',
-    '@Yu Gothic Light', 'Yu Gothic UI Light', '@Yu Gothic UI Light', 'Yu Gothic Medium', '@Yu Gothic Medium',
-    'Yu Gothic UI Semilight', '@Yu Gothic UI Semilight', '等线', '@等线', '等线 Light', '@等线 Light', '仿宋', '@仿宋', '楷体', '@楷体',
-    '黑体', '@黑体', 'HoloLens MDL2 Assets', 'Agency FB', 'Algerian', 'Book Antiqua', 'Arial Narrow',
-    'Arial Rounded MT Bold', 'Baskerville Old Face', 'Bauhaus 93', 'Bell MT', 'Bernard MT Condensed', 'Bodoni MT',
-    'Bodoni MT Black', 'Bodoni MT Condensed', 'Bodoni MT Poster Compressed', 'Bookman Old Style', 'Bradley Hand ITC',
-    'Britannic Bold', 'Berlin Sans FB', 'Berlin Sans FB Demi', 'Broadway', 'Brush Script MT', 'Bookshelf Symbol 7',
-    'Californian FB', 'Calisto MT', 'Castellar', 'Century Schoolbook', 'Centaur', 'Century', 'Chiller', 'Colonna MT',
-    'Cooper Black', 'Copperplate Gothic Bold', 'Copperplate Gothic Light', 'Curlz MT', 'Dubai', 'Dubai Light',
-    'Dubai Medium', 'Elephant', 'Engravers MT', 'Eras Bold ITC', 'Eras Demi ITC', 'Eras Light ITC', 'Eras Medium ITC',
-    'Felix Titling', 'Forte', 'Franklin Gothic Book', 'Franklin Gothic Demi', 'Franklin Gothic Demi Cond',
-    'Franklin Gothic Heavy', 'Franklin Gothic Medium Cond', 'Freestyle Script', 'French Script MT',
-    'Footlight MT Light', '方正舒体', '@方正舒体', '方正姚体', '@方正姚体', 'Garamond', 'Gigi', 'Gill Sans MT',
-    'Gill Sans MT Condensed', 'Gill Sans Ultra Bold Condensed', 'Gill Sans Ultra Bold', 'Gloucester MT Extra Condensed',
-    'Gill Sans MT Ext Condensed Bold', 'Century Gothic', 'Goudy Old Style', 'Goudy Stout', 'Harlow Solid Italic',
-    'Harrington', 'Haettenschweiler', 'High Tower Text', 'Imprint MT Shadow', 'Informal Roman', 'Blackadder ITC',
-    'Edwardian Script ITC', 'Kristen ITC', 'Jokerman', 'Juice ITC', 'Kunstler Script', 'Wide Latin', 'Lucida Bright',
-    'Lucida Calligraphy', 'Leelawadee', 'Lucida Fax', 'Lucida Handwriting', 'Lucida Sans', 'Lucida Sans Typewriter',
-    'Magneto', 'Maiandra GD', 'Matura MT Script Capitals', 'Mistral', 'Modern No. 20', 'Microsoft Uighur',
-    'Monotype Corsiva', 'Niagara Engraved', 'Niagara Solid', 'OCR A Extended', 'Old English Text MT', 'Onyx',
-    'MS Outlook', 'Palace Script MT', 'Papyrus', 'Parchment', 'Perpetua', 'Perpetua Titling MT', 'Playbill',
-    'Poor Richard', 'Pristina', 'Rage Italic', 'Ravie', 'MS Reference Sans Serif', 'MS Reference Specialty',
-    'Rockwell Condensed', 'Rockwell', 'Rockwell Extra Bold', 'Script MT Bold', 'Showcard Gothic', '隶书', '@隶书', '幼圆',
-    '@幼圆', 'Snap ITC', '华文彩云', '@华文彩云', 'Stencil', '华文仿宋', '@华文仿宋', '华文琥珀', '@华文琥珀', '华文楷体', '@华文楷体', '华文隶书', '@华文隶书',
-    '华文宋体', '@华文宋体', '华文细黑', '@华文细黑', '华文行楷', '@华文行楷', '华文新魏', '@华文新魏', '华文中宋', '@华文中宋', 'Tw Cen MT',
-    'Tw Cen MT Condensed', 'Tw Cen MT Condensed Extra Bold', 'Tempus Sans ITC', 'Viner Hand ITC', 'Vivaldi',
-    'Vladimir Script', 'Wingdings 2', 'Wingdings 3', 'Cascadia Code ExtraLight', 'Cascadia Code Light',
-    'Cascadia Code SemiLight', 'Cascadia Code', 'Cascadia Code SemiBold', 'Cascadia Mono ExtraLight',
-    'Cascadia Mono Light', 'Cascadia Mono SemiLight', 'Cascadia Mono', 'Cascadia Mono SemiBold', 'Heebo')
+    fonts = font.families()
     val = StringVar()
     butt = Combobox(w2, textvariable=val, values=fonts)
     butt.grid(row=0, column=0)
@@ -233,7 +188,7 @@ def mainwindow():
     size = Spinbox(w2, from_=5, to=55, state='readonly')
     size.grid(row=0, column=1)
     size.set('15')
-    b3 = Button(w2, text='应用', command=lambda: apply(butt.get(), size.get(), c))
+    b3 = Button(w2, text=lang_main.apply, command=lambda: apply(butt.get(), size.get(), c))
     c = IntVar()
     c1 = Checkbutton(w2, text='Bold', variable=c)
     c1.grid(row=2, column=0)
@@ -253,7 +208,7 @@ def apply(b, s, c2=0):
 
 
 def about():
-    showinfo('版本信息', '1.2')
+    showinfo(lang_main.verinfo, '1.2')
 
 
 def cut():
@@ -321,11 +276,8 @@ def command_run(command):
 
 
 def update_log():
-    logtitle = '''1.2-pre1更新 '''
-    log = '''更新:
-\t1.添加了Tag设置
-\t2.现在选中带有.com，.cn，.com.cn，.org，.net，.php的内容时，将把选中的内容当作网址直接打开
-'''
+    logtitle = subwin.fontwin_title
+    log = subwin.uplog_text
     win3 = Tk()
     win3.title('Update Log')
     win3.iconbitmap('icons/log.ico')
@@ -357,7 +309,7 @@ ThemeName:主题名字(可选light或dark)
     if len(argv)>1:
         if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
             print(commandHelp)
-    Label(w3,text='命令说明',font='华文楷体 17 bold').grid()
+    Label(w3,text=lang_main.comhelp,font='华文楷体 17 bold').grid()
     Label(w3,text=commandHelp,font='华文楷体 12').grid(row=1,column=0)
     win.mainloop()
 
@@ -441,7 +393,7 @@ from tkinter import scrolledtext
 
 
 win = Tk()
-win.title('记事本-无标题')
+win.title(lang_main.title)
 win.iconbitmap('icons/dark.ico')
 win.geometry('822x505')
 #win.resizable(False,False)
@@ -453,67 +405,67 @@ text1 = scrolledtext.ScrolledText(win,font=('Consola',str(font_size)))
 text1.pack(fill=BOTH,expand=1)
 
 s1=StringVar()
-s1='百度'
+s1=lang_main.baidu
 
 
 menu_right = Menu(win,tearoff=False)
-menu_right.add_cascade(label='复制', command=copy)
-menu_right.add_cascade(label='粘贴', command=paste)
-menu_right.add_cascade(label='全选', command=select_all)
-menu_right.add_cascade(label='删除',command=lambda:text1.delete(SEL_FIRST,SEL_LAST))
-menu_right.add_cascade(label='搜索', command=lambda:search(text1.get(SEL_FIRST,SEL_LAST),t=1))
-menu_right.add_cascade(label='Tag设置',command=lambda:add_tag_window(tagstart=SEL_FIRST,tagend=SEL_LAST))
+menu_right.add_cascade(label=lang_main.copy, command=copy)
+menu_right.add_cascade(label=lang_main.paste, command=paste)
+menu_right.add_cascade(label=lang_main.selall, command=select_all)
+menu_right.add_cascade(label=lang_main.delete,command=lambda:text1.delete(SEL_FIRST,SEL_LAST))
+menu_right.add_cascade(label=lang_main.semenu, command=lambda:search(text1.get(SEL_FIRST,SEL_LAST),t=1))
+menu_right.add_cascade(label=lang_main.tagset,command=lambda:add_tag_window(tagstart=SEL_FIRST,tagend=SEL_LAST))
 menu_right.add_separator()
-menu_right.add_command(label='运行批处理文件',command=run_batfile)
+menu_right.add_command(label=lang_main.click_batch,command=run_batfile)
 menu_right.add_command(label='Close Window',command=win.quit)
 showPopoutMenu(text1, menu_right)
 
 
 menu1 = Menu(win)
 menu1_1 = Menu(menu1, tearoff=False)
-menu1.add_cascade(label='文件', menu=menu1_1)
-menu1_1.add_command(label='新建', command=new)
-menu1_1.add_command(label='保存', command=save)
-menu1_1.add_command(label='另存为', command=save_as)
-menu1_1.add_command(label='打开', command=open_file)
+menu1.add_cascade(label=lang_main.filemenu, menu=menu1_1)
+menu1_1.add_command(label=lang_main.new, command=new)
+menu1_1.add_command(label=lang_main.save, command=save)
+menu1_1.add_command(label=lang_main.saveas, command=save_as)
+menu1_1.add_command(label=lang_main.open, command=open_file)
 menu1_1.add_separator()
-menu1_1.add_command(label='关闭', command=win.quit, accelerator='Alt+F4')
+menu1_1.add_command(label=lang_main.exit, command=win.quit, accelerator='Alt+F4')
 menu2_1=Menu(menu1,tearoff=False)
-menu1.add_cascade(label='编辑',menu=menu2_1)
-menu2_1.add_command(label='复制', command=copy, accelerator='Ctrl+C')
-menu2_1.add_command(label='剪切', command=cut, accelerator='Ctrl+X')
-menu2_1.add_command(label='粘贴', command=paste, accelerator='Ctrl+V')
-menu2_1.add_command(label='全选', command=select_all, accelerator='Ctrl+A')
-menu2_1.add_command(label='删除',command=lambda:text1.delete(SEL_FIRST,SEL_LAST),accelerator='Backspace')
-menu2_1.add_command(label='Tag设置', command=add_tag_window)
+menu1.add_cascade(label=lang_main.editmenu,menu=menu2_1)
+menu2_1.add_command(label=lang_main.copy, command=copy, accelerator='Ctrl+C')
+menu2_1.add_command(label=lang_main.cut, command=cut, accelerator='Ctrl+X')
+menu2_1.add_command(label=lang_main.paste, command=paste, accelerator='Ctrl+V')
+menu2_1.add_command(label=lang_main.selall, command=select_all, accelerator='Ctrl+A')
+menu2_1.add_command(label=lang_main.delete,command=lambda:text1.delete(SEL_FIRST,SEL_LAST),accelerator='Backspace')
+menu2_1.add_command(label=lang_main.tagset, command=add_tag_window)
 menu2_1.add_separator()
-menu2_1.add_command(label='撤销', command=undo)
-menu2_1.add_command(label='恢复', command=redo)
+menu2_1.add_command(label=lang_main.undo, command=undo)
+menu2_1.add_command(label=lang_main.redo, command=redo)
 menu3_1 = Menu(menu1, tearoff=False)
-menu1.add_cascade(label='设置', menu=menu3_1)
-menu3_1.add_command(label='字体', command=mainwindow)
-menu3_1.add_command(label='主题', command=themeWindow)
-menu3_1.add_command(label='一键运行批处理文件', command=run_batfile)
-menu3_1.add_command(label='运行Python',command=run_pyfile)
+menu1.add_cascade(label=lang_main.setmenu, menu=menu3_1)
+menu3_1.add_command(label=lang_main.fontset, command=mainwindow)
+menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
+menu3_1.add_command(label=lang_main.click_batch, command=run_batfile)
+menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu4_1 = Menu(menu1,tearoff=False)
-menu1.add_cascade(label='窗口',menu=menu4_1)
-menu4_1.add_command(label='最大化',command=lambda:win.state('zoomed'))
-menu4_1.add_command(label='最小化',command=win.iconify)
+menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
+menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
+menu4_1.add_command(label=lang_main.iconify,command=win.iconify)
 #menu4_1.add_command(label='恢复窗口默认大小',command=nor_size)
-menu4_1.add_command(label='设置主窗口图标',command=set_icon)
+menu4_1.add_command(label=lang_main.setico,command=set_icon)
 menu5_1 = Menu(menu1, tearoff=False)
-menu1.add_cascade(label='搜索', menu=menu5_1)
+menu1.add_cascade(label=lang_main.semenu, menu=menu5_1)
 menu6_1 = Menu(menu1, tearoff=False)
-menu5_1.add_command(label='百度',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='百度'))
-menu5_1.add_command(label='必应',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='必应'))
-menu5_1.add_command(label='搜狗',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='搜狗'))
+menu5_1.add_command(label=lang_main.baidu,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.baidu))
+menu5_1.add_command(label=lang_main.bing,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bing))
+menu5_1.add_command(label=lang_main.sougo,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.sougo))
 menu5_1.add_command(label='360',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='360'))
-menu5_1.add_command(label='哔哩哔哩',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='哔哩哔哩'))
-menu5_1.add_command(label='百度贴吧',command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz='百度贴吧'))
-menu1.add_cascade(label='关于', menu=menu6_1)
-menu6_1.add_command(label='关于记事本', command=about)
-menu6_1.add_command(label='更新日志', command=update_log)
-menu6_1.add_command(label='命令说明', command=command_help)
+menu5_1.add_command(label=lang_main.bb,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bb))
+menu5_1.add_command(label=lang_main.bdtb,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bdtb))
+menu1.add_cascade(label=lang_main.aboutmenu, menu=menu6_1)
+menu6_1.add_command(label=lang_main.aboutnotepad, command=about)
+menu6_1.add_command(label=lang_main.uplog, command=update_log)
+menu6_1.add_command(label=lang_main.comhelp, command=command_help)
 win.config(menu=menu1)
 
 
