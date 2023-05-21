@@ -15,7 +15,7 @@ fontwin_title='字体设置'
 
 #Long Texts
 
-uplog_title='1.2 release1更新'
+uplog_title='1.2 release2更新'
 uplog_text='''更新:
 \t1.添加了英语支持，可通过更改"程序根目录\\data\\langs\\lang.txt"
 为“中文”或“English”来切换对应的语言
