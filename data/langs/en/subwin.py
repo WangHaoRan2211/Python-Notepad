@@ -15,7 +15,7 @@ fontwin_title='Font Setting'
 
 #Long Texts
 
-uplog_title='1.2 release1 Update'
+uplog_title='1.2 release2 Update'
 uplog_text='''Update: 
 
 \t1. Added English support, which can be changed by changing the "program root directory\\data\\langs\\lang.txt"
