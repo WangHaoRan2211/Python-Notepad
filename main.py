@@ -16,10 +16,16 @@ font_size=15
 with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
 
-if l=='中文':
+if l=='简体中文':
     from data.langs.zh import lang_main,subwin
 elif l=='English':
     from data.langs.en import lang_main,subwin
+elif l=='Español':
+    from data.langs.sp import lang_main,subwin
+elif l=='繁體中文':
+    from data.langs.tw import lang_main,subwin
+else:
+    from data.langs.en import subwin,lang_main
 filetype = lang_main.filetype_lang
 
 
@@ -31,7 +37,7 @@ def save_as():
     with open(path, mode='w', encoding='utf-8') as sa:
         sa.write(text1.get(0.0, END))
     save = True
-    win.title(lang_main.nortitle + path + '-Snapshot(22w47a)')
+    win.title(lang_main.nortitle + path)
 
 
 def toggle_theme():
@@ -242,6 +248,39 @@ def select_all():
 
 
 
+def lanWindow():
+    lw=Toplevel()
+    lw.iconbitmap('icons\\lang.ico')
+    lw.title(subwin.langwin_title)
+    lw.resizable(False,False)
+    l=StringVar()
+    c3=Combobox(lw,textvariable=l,values=['简体中文','繁體中文','English','Español'],state='readonly')
+    c3.grid(row=0,column=0)
+    with open('data\\langs\\lang.txt',encoding='utf-8')as d:
+        l1=d.read()
+    if l1=='简体中文':
+        c3.set('简体中文')
+    elif l1=='繁體中文':
+        c3.set('繁體中文')
+    elif l1=='English':
+        c3.set('English')
+    elif l1=='Español':
+        c3.set('Español')
+    else:
+        lw.quit()
+    Label(lw,text=subwin.langwin_info,foreground='#FF0000').grid(row=1,column=0)
+    Button(lw,text=subwin.ok,command=lambda:set_lang(c3.get())).grid(row=2,column=1)
+    lw.mainloop()
+
+
+def set_lang(lang):
+    with open('data\\langs\\lang.txt',mode='w',encoding='utf-8')as gjh:
+        gjh.write(lang)
+
+
+
+
+
 
 def command_run(command):
     #print(len(argv))
@@ -268,6 +307,13 @@ def command_run(command):
         else:
             win.iconbitmap('icons/light.ico')
         set_theme(argv[2])
+        if command=='--lang' or command=='-L' or command=='/lang' or command=='lang':
+            if argv[2]=='zh':
+                from data.langs.zh import subwin,lang_main
+            elif argv[2]=='sp':
+                from data.langs.sp import subwin,lang_main
+            elif argv[2]=='en':
+                from data.langs.en import subwin,lang_main
 
 
         if command == 'run':
@@ -295,17 +341,7 @@ def command_help():
     w3.iconbitmap('icons/info.ico')
     w3.resizable(False,False)
     w3.title('Command Help')
-    commandHelp = '''open、-O、--open、/open:自动打开文件  使用方法:python main.py --open {filePath} [Encoding]
-filePath:打开的文件路径(可以是相对路径或绝对路径)  Encoding:打开的文件使用编码(默认UTF-8)
-
-/help、--help、-H、help:说明窗口  使用方法:python main.py --help
-
-/set-theme、--set-theme、-ST、set-theme:以自定义的主题启动记事本  使用方法:python main.py --set-theme {ThemeName}
-ThemeName:主题名字(可选light或dark)
-
-
-{ValueName}:必填项              [ValueName]:选填项
-    '''
+    commandHelp = subwin.comhelp
     if len(argv)>1:
         if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
             print(commandHelp)
@@ -351,33 +387,33 @@ def nor_size():
 
 def add_tag_window(tagstart='',tagend=''):
     r2=Toplevel()
-    r2.title('Tag设置')
+    r2.title(subwin.tagwin_title)
     r2.resizable(False,False)
-    Label(r2,text='输入开始位置(格式:行.列,从1开始)').grid()
+    Label(r2,text=subwin.tagwin_startext).grid()
     entr1=Entry(r2)
     entr1.grid(row=1,column=0,columnspan=2)
-    Label(r2, text='输入结束位置(格式:行.列,从1开始)').grid(row=2,column=0)
+    Label(r2, text=subwin.tagwin_endtext).grid(row=2,column=0)
     entr2 = Entry(r2)
     entr2.grid(row=3, column=0,columnspan=2)
     entr1.insert(0,tagstart)
     entr2.insert(0, tagend)
-    Label(r2, text='输入背景色').grid(row=4, column=0)
+    Label(r2, text=subwin.tagwin_bg).grid(row=4, column=0)
     entr3=Entry(r2)
     entr3.grid(row=4,column=1)
     entr3.insert(0,'white')
     #cc1=Button(win,text='选择颜色',command=entr3.insert(0,askcolor()[2]))
     #cc1.grid(row=4,column=2)
-    Label(r2, text='输入前景色').grid(row=5, column=0)
+    Label(r2, text=subwin.tagwin_fg).grid(row=5, column=0)
     entr4 = Entry(r2)
     entr4.insert(0,'red')
     entr4.grid(row=5, column=1)
-    Label(r2, text='输入Tag名').grid(row=6, column=0)
+    Label(r2, text=subwin.tagwin_name).grid(row=6, column=0)
     entr5 = Entry(r2)
     entr5.grid(row=6,column=1)
     entr5.insert(0, 'tag1')
-    addB=Button(r2,text='添加Tag',command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get()))
+    addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get()))
     addB.grid(row=7,column=0,ipadx=30,ipady=7)
-    remB = Button(r2, text='移除Tag',command=lambda:remove_tag(entr5.get()))
+    remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
     remB.grid(row=7, column=1,ipadx=30,ipady=7)
     r2.mainloop()
 
@@ -447,6 +483,7 @@ menu3_1.add_command(label=lang_main.fontset, command=mainwindow)
 menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
 menu3_1.add_command(label=lang_main.click_batch, command=run_batfile)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
+menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
 menu4_1 = Menu(menu1,tearoff=False)
 menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
 menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
