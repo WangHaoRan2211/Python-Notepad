@@ -24,6 +24,10 @@ elif l=='Español':
     from data.langs.sp import lang_main,subwin
 elif l=='繁體中文':
     from data.langs.tw import lang_main,subwin
+elif l=='French':
+    from data.langs.fr import lang_main,subwin
+elif l=='Deutsch':
+    from data.langs.de import lang_main,subwin
 else:
     from data.langs.en import subwin,lang_main
 filetype = lang_main.filetype_lang
@@ -254,7 +258,7 @@ def lanWindow():
     lw.title(subwin.langwin_title)
     lw.resizable(False,False)
     l=StringVar()
-    c3=Combobox(lw,textvariable=l,values=['简体中文','繁體中文','English','Español'],state='readonly')
+    c3=Combobox(lw,textvariable=l,values=['简体中文','繁體中文','English','Español','French','Deutsch'],state='readonly')
     c3.grid(row=0,column=0)
     with open('data\\langs\\lang.txt',encoding='utf-8')as d:
         l1=d.read()
@@ -266,6 +270,10 @@ def lanWindow():
         c3.set('English')
     elif l1=='Español':
         c3.set('Español')
+    elif l1=='French':
+        c3.set('French')
+    elif l1=='Deutsch':
+        c3.set('Deutsch')
     else:
         lw.quit()
     Label(lw,text=subwin.langwin_info,foreground='#FF0000').grid(row=1,column=0)
@@ -321,18 +329,7 @@ def command_run(command):
 
 
 
-def update_log():
-    logtitle = subwin.fontwin_title
-    log = subwin.uplog_text
-    win3 = Tk()
-    win3.title('Update Log')
-    win3.iconbitmap('icons/log.ico')
-    win3.resizable(False, False)
-    ul1 = Label(win3, text=logtitle, font='华文楷体 19 bold')
-    ul1.grid(row=1,column=0)
-    ul2 = Label(win3, text=log, font='华文楷体 14')
-    ul2.grid()
-    win3.mainloop()
+
 
 
 
@@ -501,7 +498,6 @@ menu5_1.add_command(label=lang_main.bb,command=lambda:search(searchName=text1.ge
 menu5_1.add_command(label=lang_main.bdtb,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bdtb))
 menu1.add_cascade(label=lang_main.aboutmenu, menu=menu6_1)
 menu6_1.add_command(label=lang_main.aboutnotepad, command=about)
-menu6_1.add_command(label=lang_main.uplog, command=update_log)
 menu6_1.add_command(label=lang_main.comhelp, command=command_help)
 win.config(menu=menu1)
 
