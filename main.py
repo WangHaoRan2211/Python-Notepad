@@ -1,5 +1,6 @@
 # #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import json
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
@@ -9,12 +10,16 @@ import webbrowser as wb
 from sv_ttk import *
 from sys import argv
 from tkinter.font import Font
-
+from json import *
 from tkinter.colorchooser import *
 save = False
 font_size=15
 with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
+lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
+
+
+
 
 if l=='简体中文':
     from data.langs.zh import lang_main,subwin
@@ -29,7 +34,39 @@ elif l=='French':
 elif l=='Deutsch':
     from data.langs.de import lang_main,subwin
 else:
-    from data.langs.en import subwin,lang_main
+    from data.langs.en import lang_main,subwin
+
+
+#exec('from data.packs.langpacks.gg.datas import lang_main,subwin')
+
+#print('Not langs name '+l)
+
+
+
+
+langpacklist = list()
+dbtype_list = os.listdir('data/packs/langpacks')
+for item in os.scandir('data/packs/langpacks'):
+    if item.is_dir():
+        langpacklist.append(item.path)
+
+for i in range(0, len(langpacklist)):
+    lpath = langpacklist[i]
+    with open(lpath + '\\config.json', encoding='utf-8') as v:
+        configjson = v.read()
+    config = json.loads(configjson)
+    with open('version', encoding='utf-8') as hfg:
+        ver = hfg.read()
+    if config["version"] == ver:
+        lang_list.append(config['langname'])
+        if l == config['langname']:
+            #print('from data.packs.langpacks.' + dbtype_list[i] + '.datas import lang_main,subwin')
+            exec('from data.packs.langpacks.' + dbtype_list[i] + '.datas import lang_main,subwin')
+
+
+
+
+
 filetype = lang_main.filetype_lang
 
 
@@ -258,7 +295,7 @@ def lanWindow():
     lw.title(subwin.langwin_title)
     lw.resizable(False,False)
     l=StringVar()
-    c3=Combobox(lw,textvariable=l,values=['简体中文','繁體中文','English','Español','French','Deutsch'],state='readonly')
+    c3=Combobox(lw,textvariable=l,values=lang_list,state='readonly')
     c3.grid(row=0,column=0)
     with open('data\\langs\\lang.txt',encoding='utf-8')as d:
         l1=d.read()
@@ -275,7 +312,12 @@ def lanWindow():
     elif l1=='Deutsch':
         c3.set('Deutsch')
     else:
-        lw.quit()
+        for item in os.scandir('data/packs/langpacks'):
+            if item.is_dir():
+                with open(item.path+'\\config.json',encoding='utf-8')as afg:
+                    a=loads(afg.read())
+                if l1 == a['langname']:
+                    c3.set(a['langname'])
     Label(lw,text=subwin.langwin_info,foreground='#FF0000').grid(row=1,column=0)
     Button(lw,text=subwin.ok,command=lambda:set_lang(c3.get())).grid(row=2,column=1)
     lw.mainloop()
