@@ -46,6 +46,9 @@ else:
 
 langpacklist = list()
 dbtype_list = os.listdir('data/packs/langpacks')
+for dbtype in dbtype_list:
+    if os.path.isfile(os.path.join('data/packs/langpacks',dbtype)):
+        dbtype_list.remove(dbtype)
 for item in os.scandir('data/packs/langpacks'):
     if item.is_dir():
         langpacklist.append(item.path)
