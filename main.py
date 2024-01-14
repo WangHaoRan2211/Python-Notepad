@@ -9,6 +9,8 @@ import os
 import webbrowser as wb
 from sv_ttk import *
 from sys import argv
+from zipfile import *
+
 from tkinter.font import Font
 from json import *
 from tkinter.colorchooser import *
@@ -59,7 +61,7 @@ for i in range(0, len(langpacklist)):
         configjson = v.read()
     config = json.loads(configjson)
     with open('version', encoding='utf-8') as hfg:
-        ver = hfg.read()
+        ver = hfg.readlines()[0]
     if config["version"] == ver:
         lang_list.append(config['langname'])
         if l == config['langname']:
@@ -196,6 +198,9 @@ def search(searchName,Searchwz=lang_main.baidu,t=0):
 
 
 
+
+
+
 def color():
     for i in range(1,500):
         text1.tag_add('1',text1.search(')',0.0))
@@ -258,7 +263,7 @@ def apply(b, s, c2=0):
 
 
 def about():
-    showinfo(lang_main.verinfo, '1.2')
+    showinfo(lang_main.verinfo, '1.3.0a2')
 
 
 def cut():
@@ -486,7 +491,7 @@ s1=StringVar()
 s1=lang_main.baidu
 
 
-menu_right = Menu(win,tearoff=False)
+menu_right = Menu(win,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu_right.add_cascade(label=lang_main.copy, command=copy)
 menu_right.add_cascade(label=lang_main.paste, command=paste)
 menu_right.add_cascade(label=lang_main.selall, command=select_all)
@@ -500,7 +505,7 @@ showPopoutMenu(text1, menu_right)
 
 
 menu1 = Menu(win)
-menu1_1 = Menu(menu1, tearoff=False)
+menu1_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu1.add_cascade(label=lang_main.filemenu, menu=menu1_1)
 menu1_1.add_command(label=lang_main.new, command=new)
 menu1_1.add_command(label=lang_main.save, command=save)
@@ -508,7 +513,7 @@ menu1_1.add_command(label=lang_main.saveas, command=save_as)
 menu1_1.add_command(label=lang_main.open, command=open_file)
 menu1_1.add_separator()
 menu1_1.add_command(label=lang_main.exit, command=win.quit, accelerator='Alt+F4')
-menu2_1=Menu(menu1,tearoff=False)
+menu2_1=Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu1.add_cascade(label=lang_main.editmenu,menu=menu2_1)
 menu2_1.add_command(label=lang_main.copy, command=copy, accelerator='Ctrl+C')
 menu2_1.add_command(label=lang_main.cut, command=cut, accelerator='Ctrl+X')
@@ -519,22 +524,22 @@ menu2_1.add_command(label=lang_main.tagset, command=add_tag_window)
 menu2_1.add_separator()
 menu2_1.add_command(label=lang_main.undo, command=undo)
 menu2_1.add_command(label=lang_main.redo, command=redo)
-menu3_1 = Menu(menu1, tearoff=False)
+menu3_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu1.add_cascade(label=lang_main.setmenu, menu=menu3_1)
 menu3_1.add_command(label=lang_main.fontset, command=mainwindow)
 menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
 menu3_1.add_command(label=lang_main.click_batch, command=run_batfile)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
-menu4_1 = Menu(menu1,tearoff=False)
+menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
 menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
 menu4_1.add_command(label=lang_main.iconify,command=win.iconify)
 #menu4_1.add_command(label='恢复窗口默认大小',command=nor_size)
 menu4_1.add_command(label=lang_main.setico,command=set_icon)
-menu5_1 = Menu(menu1, tearoff=False)
+menu5_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu1.add_cascade(label=lang_main.semenu, menu=menu5_1)
-menu6_1 = Menu(menu1, tearoff=False)
+menu6_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
 menu5_1.add_command(label=lang_main.baidu,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.baidu))
 menu5_1.add_command(label=lang_main.bing,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bing))
 menu5_1.add_command(label=lang_main.sougo,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.sougo))
@@ -553,6 +558,23 @@ if len(argv)>1:
         win.quit()
         command_help()
 
+
+
+
+'''modpathlist=list()
+for item in os.scandir('data\\packs\\addons'):
+    if item.is_dir():
+        modpathlist.append(item.path)
+for i in modpathlist:
+    print('Loading Mod Path:'+i)
+    with open(i+'\\config.json',encoding='utf-8')as asy:
+        modname=json.loads(asy.read())['name']
+        ver=json.loads(asy.read())['version']
+    with open('version',encoding='utf-8')as fcv:
+        if fcv.readlines()[1]!=ver:
+            print('[Error]Load Mod %s Version is error,Notepad Version is %s,Mod Version is %s' %(modname,fcv.readlines()[1],ver))
+            continue
+'''
 
 
 
