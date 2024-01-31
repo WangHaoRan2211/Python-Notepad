@@ -214,10 +214,6 @@ def color():
 
 
 
-def run_batfile():
-    with open(r'data\temp.bat', mode='w', encoding='utf-8') as saa:
-        saa.write(text1.get(0.0, END))
-    os.system(os.getcwd() + r'\data\temp.bat')
 
 
 def showPopoutMenu(w, menux):
@@ -242,19 +238,21 @@ def mainwindow():
     butt.set('Consolas')
     size = Spinbox(w2, from_=5, to=55, state='readonly')
     size.grid(row=0, column=1)
-    size.set('15')
+    size.set('12')
     b3 = Button(w2, text=lang_main.apply, command=lambda: apply(butt.get(), size.get(), c))
     c = IntVar()
-    c1 = Checkbutton(w2, text='Bold', variable=c)
-    c1.grid(row=2, column=0)
+    #c1 = Checkbutton(w2, text='Bold', variable=c)
+    #c1.grid(row=2, column=0)
     b3.grid(row=3, column=1)
+    #pre_text=Label(w2,text='文字\nLetter\nZeichen\nТекст')
+    #pre_text.grid(row=4, column=0)
     w2.mainloop()
 
 
 def apply(b, s, c2=0):
     bold_font = Font(family=b,size=s,weight="bold")
-    _font = Font(family=b, size=s)
-    text1.tag_configure("BOLD", font=bold_font)
+    _font = Font(family=b, size=s,weight="normal")
+    #text1.tag_configure("BOLD", font=bold_font)
     if c2 == 0:
         text1.config(font=_font)
     else:
@@ -475,6 +473,23 @@ def modif_fontsize2():
 from tkinter import scrolledtext
 
 
+import sys
+inb=0
+def run_bat():
+    os.chdir(os.path.dirname(sys.argv[0]))
+    global inb
+    with open('np_modules\\batedit\\batfile.bat', 'w',encoding='utf-8') as file:
+        file.write(text1.get('1.0', END))
+    if inb != 0:
+        del sys.modules['np_modules.batedit.bat_editor']
+    import np_modules.batedit.bat_editor
+    inb+=1
+    #print(sys.modules,inb)
+    
+
+
+
+
 win = Tk()
 win.title(lang_main.title)
 win.iconbitmap('icons/dark.ico')
@@ -484,7 +499,7 @@ win.geometry('822x505')
 
 
 
-text1 = scrolledtext.ScrolledText(win,font=('Consola',str(font_size)))
+text1 = scrolledtext.ScrolledText(win,font=('Consolas 12'))
 text1.pack(fill=BOTH,expand=1)
 
 s1=StringVar()
@@ -499,7 +514,7 @@ menu_right.add_cascade(label=lang_main.delete,command=lambda:text1.delete(SEL_FI
 menu_right.add_cascade(label=lang_main.semenu, command=lambda:search(text1.get(SEL_FIRST,SEL_LAST),t=1))
 menu_right.add_cascade(label=lang_main.tagset,command=lambda:add_tag_window(tagstart=SEL_FIRST,tagend=SEL_LAST))
 menu_right.add_separator()
-menu_right.add_command(label=lang_main.click_batch,command=run_batfile)
+menu_right.add_command(label=lang_main.click_batch,command=run_bat)
 menu_right.add_command(label='Close Window',command=win.quit)
 showPopoutMenu(text1, menu_right)
 
@@ -528,7 +543,7 @@ menu3_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',acti
 menu1.add_cascade(label=lang_main.setmenu, menu=menu3_1)
 menu3_1.add_command(label=lang_main.fontset, command=mainwindow)
 menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
-menu3_1.add_command(label=lang_main.click_batch, command=run_batfile)
+menu3_1.add_command(label=lang_main.click_batch, command=run_bat)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
 menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
