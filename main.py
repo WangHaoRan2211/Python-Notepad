@@ -15,6 +15,7 @@ from tkinter.font import Font
 from json import *
 from tkinter.colorchooser import *
 save = False
+debug_mode=0
 font_size=15
 with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
@@ -261,7 +262,7 @@ def apply(b, s, c2=0):
 
 
 def about():
-    showinfo(lang_main.verinfo, '1.3.0a2')
+    showinfo(lang_main.verinfo, '1.3.0b2')
 
 
 def cut():
@@ -324,7 +325,7 @@ def lanWindow():
                     a=loads(afg.read())
                 if l1 == a['langname']:
                     c3.set(a['langname'])
-    Label(lw,text=subwin.langwin_info,foreground='#FF0000').grid(row=1,column=0)
+    Label(lw,text=subwin.langwin_info,foreground='#FF0000',font='微软雅黑 10').grid(row=1,column=0)
     Button(lw,text=subwin.ok,command=lambda:set_lang(c3.get())).grid(row=2,column=1)
     lw.mainloop()
 
@@ -390,8 +391,8 @@ def command_help():
     if len(argv)>1:
         if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
             print(commandHelp)
-    Label(w3,text=lang_main.comhelp,font='华文楷体 17 bold').grid()
-    Label(w3,text=commandHelp,font='华文楷体 12').grid(row=1,column=0)
+    Label(w3,text=lang_main.comhelp,font='微软雅黑 17 bold').grid()
+    Label(w3,text=commandHelp,font='微软雅黑 10').grid(row=1,column=0)
     win.mainloop()
 
 
@@ -434,25 +435,25 @@ def add_tag_window(tagstart='',tagend=''):
     r2=Toplevel()
     r2.title(subwin.tagwin_title)
     r2.resizable(False,False)
-    Label(r2,text=subwin.tagwin_startext).grid()
+    Label(r2,text=subwin.tagwin_startext,font='微软雅黑 10').grid()
     entr1=Entry(r2)
     entr1.grid(row=1,column=0,columnspan=2)
-    Label(r2, text=subwin.tagwin_endtext).grid(row=2,column=0)
+    Label(r2, text=subwin.tagwin_endtext,font='微软雅黑 10').grid(row=2,column=0)
     entr2 = Entry(r2)
     entr2.grid(row=3, column=0,columnspan=2)
     entr1.insert(0,tagstart)
     entr2.insert(0, tagend)
-    Label(r2, text=subwin.tagwin_bg).grid(row=4, column=0)
+    Label(r2, text=subwin.tagwin_bg,font='微软雅黑 10').grid(row=4, column=0)
     entr3=Entry(r2)
     entr3.grid(row=4,column=1)
     entr3.insert(0,'white')
     #cc1=Button(win,text='选择颜色',command=entr3.insert(0,askcolor()[2]))
     #cc1.grid(row=4,column=2)
-    Label(r2, text=subwin.tagwin_fg).grid(row=5, column=0)
+    Label(r2, text=subwin.tagwin_fg,font='微软雅黑 10').grid(row=5, column=0)
     entr4 = Entry(r2)
     entr4.insert(0,'red')
     entr4.grid(row=5, column=1)
-    Label(r2, text=subwin.tagwin_name).grid(row=6, column=0)
+    Label(r2, text=subwin.tagwin_name,font='微软雅黑 10').grid(row=6, column=0)
     entr5 = Entry(r2)
     entr5.grid(row=6,column=1)
     entr5.insert(0, 'tag1')
@@ -485,13 +486,18 @@ def run_bat():
     import np_modules.batedit.bat_editor
     inb+=1
     #print(sys.modules,inb)
-    
 
+if "--debug" in sys.argv or "-debug" in sys.argv or "-D" in sys.argv:
+    print('debug mode on')
+    debug_mode = 1
 
 
 
 win = Tk()
-win.title(lang_main.title)
+if debug_mode == 1:
+    win.title(lang_main.title + " - Debug Mode")
+else:
+    win.title(lang_main.title)
 win.iconbitmap('icons/dark.ico')
 win.geometry('822x505')
 #win.resizable(False,False)
@@ -506,7 +512,7 @@ s1=StringVar()
 s1=lang_main.baidu
 
 
-menu_right = Menu(win,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu_right = Menu(win,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu_right.add_cascade(label=lang_main.copy, command=copy)
 menu_right.add_cascade(label=lang_main.paste, command=paste)
 menu_right.add_cascade(label=lang_main.selall, command=select_all)
@@ -520,7 +526,7 @@ showPopoutMenu(text1, menu_right)
 
 
 menu1 = Menu(win)
-menu1_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu1_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.filemenu, menu=menu1_1)
 menu1_1.add_command(label=lang_main.new, command=new)
 menu1_1.add_command(label=lang_main.save, command=save)
@@ -528,7 +534,7 @@ menu1_1.add_command(label=lang_main.saveas, command=save_as)
 menu1_1.add_command(label=lang_main.open, command=open_file)
 menu1_1.add_separator()
 menu1_1.add_command(label=lang_main.exit, command=win.quit, accelerator='Alt+F4')
-menu2_1=Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu2_1=Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.editmenu,menu=menu2_1)
 menu2_1.add_command(label=lang_main.copy, command=copy, accelerator='Ctrl+C')
 menu2_1.add_command(label=lang_main.cut, command=cut, accelerator='Ctrl+X')
@@ -539,22 +545,22 @@ menu2_1.add_command(label=lang_main.tagset, command=add_tag_window)
 menu2_1.add_separator()
 menu2_1.add_command(label=lang_main.undo, command=undo)
 menu2_1.add_command(label=lang_main.redo, command=redo)
-menu3_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu3_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.setmenu, menu=menu3_1)
 menu3_1.add_command(label=lang_main.fontset, command=mainwindow)
 menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
 menu3_1.add_command(label=lang_main.click_batch, command=run_bat)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
-menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
 menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
 menu4_1.add_command(label=lang_main.iconify,command=win.iconify)
 #menu4_1.add_command(label='恢复窗口默认大小',command=nor_size)
 menu4_1.add_command(label=lang_main.setico,command=set_icon)
-menu5_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu5_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.semenu, menu=menu5_1)
-menu6_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000')
+menu6_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu5_1.add_command(label=lang_main.baidu,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.baidu))
 menu5_1.add_command(label=lang_main.bing,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bing))
 menu5_1.add_command(label=lang_main.sougo,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.sougo))
@@ -564,6 +570,9 @@ menu5_1.add_command(label=lang_main.bdtb,command=lambda:search(searchName=text1.
 menu1.add_cascade(label=lang_main.aboutmenu, menu=menu6_1)
 menu6_1.add_command(label=lang_main.aboutnotepad, command=about)
 menu6_1.add_command(label=lang_main.comhelp, command=command_help)
+menu_debug = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu1.add_cascade(label="Debug", menu=menu_debug)
+menu_debug.add_command(label=lang_main.click_batch, command=run_bat)
 win.config(menu=menu1)
 
 
