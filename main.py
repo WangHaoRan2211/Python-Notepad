@@ -626,6 +626,7 @@ menu5_1.add_command(label=lang_main.bb,command=lambda:search(searchName=text1.ge
 menu5_1.add_command(label=lang_main.bdtb,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bdtb))
 menu1.add_cascade(label=lang_main.aboutmenu, menu=menu6_1)
 menu6_1.add_command(label=lang_main.aboutnotepad, command=about)
+menu6_1.add_command(label=lang_main.open_github, command=lambda:wb.open('https://github.com/WangHaoRan2211/Python-Notepad'))
 menu6_1.add_command(label=lang_main.comhelp, command=command_help)
 if debug_mode == 1:
     menu_debug = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
