@@ -7,10 +7,10 @@ from tkinter.filedialog import *
 from tkinter.ttk import *
 import os
 import webbrowser as wb
-from sv_ttk import *
+from libs.sv_ttk import *
 from sys import argv
 from zipfile import *
-
+from libs import chardet
 from tkinter.font import Font
 from json import *
 from tkinter.colorchooser import *
@@ -132,6 +132,7 @@ def theme():
 
 
 def save():
+    global save
     if save == True:
         with open(path, mode='w', encoding='utf-8') as sa:
             sa.write(text1.get(0.0, END))
@@ -144,14 +145,19 @@ def new():
     win.title(lang_main.new_window_title)
     save = False
 
-
+def get_encoding(file):
+    with open(file,'rb') as f:
+        tmp = chardet.detect(f.read())
+        return tmp['encoding']
+    
 def open_file():
     save = True
     s = askopenfile(defaultextension='.txt', filetypes=filetype, title=lang_main.open)
     path = s.name
+    cd = get_encoding(path)
     win.title(lang_main.nortitle + path + '')
     text1.delete(1.0, END)
-    file = open(path, encoding='utf-8')
+    file = open(path, encoding=str(cd))
     text1.insert(1.0, file.read())
     file.close()
 
@@ -162,7 +168,7 @@ def open_file():
 
 
 
-def search(searchName,Searchwz=lang_main.baidu,t=0):
+def search(searchName,Searchwz=lang_main.bing,t=0):
     if t==1:
         if '.com' in searchName or '.cn' in searchName or '.com.cn' in searchName or '.org' in searchName or '.net' in searchName:
             wb.open(searchName)
@@ -262,7 +268,7 @@ def apply(b, s, c2=0):
 
 
 def about():
-    showinfo(lang_main.verinfo, '1.3.0b2')
+    showinfo(lang_main.verinfo, '1.3.0\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
 
 
 def cut():
@@ -334,8 +340,50 @@ def set_lang(lang):
     with open('data\\langs\\lang.txt',mode='w',encoding='utf-8')as gjh:
         gjh.write(lang)
 
+def show_arrow_cursor(event=None):
+    text1.config(cursor='hand2')
+
+def show_xterm_cursor(event=None):
+    text1.config(cursor='xterm')
+
+def click_to_website(event=None,link=''):
+    print("click to "+link)
+    wb.open(link)
+
+def linkset(tag, link1):
+    print(tag + link1)
+    text1.tag_bind(
+        tag, 
+        '<Enter>', 
+        lambda event: show_arrow_cursor()  # 使用 lambda 包装函数调用
+    )
+    # 绑定鼠标离开事件（光标恢复默认）
+    text1.tag_bind(
+        tag, 
+        '<Leave>', 
+        lambda event: show_xterm_cursor()  # 使用 lambda 包装函数调用
+        )
+
+    # 使用 lambda 传递 event 和 link 参数
+    text1.tag_bind(tag, '<Button-1>', lambda event, link=link1: click_to_website(link=link))
+
+    
 
 
+
+def linkset_window():
+    lw = Toplevel()
+    lw.resizable(width=None, height=None)
+    lw.title(subwin.linksetwin_title)
+    lw.resizable(0,0)
+    Label(lw,text=subwin.linkinputtag,font='微软雅黑 10').grid(row=0,column=0)
+    Elink=Entry(lw)
+    Elink.grid(row=1,column=0,columnspan=2,ipadx=60)
+    Label(lw,text=subwin.linkinputlink,font='微软雅黑 10').grid(row=2,column=0,)
+    Elink2=Entry(lw)
+    Elink2.grid(row=3,column=0,columnspan=2,ipadx=60)
+    Button(lw,text=subwin.apply,command=lambda:linkset(Elink.get(),Elink2.get())).grid(row=4,column=0,ipadx=30)
+    Button(lw,text=subwin.close,command=lambda:lw.destroy()).grid(row=4,column=1,ipadx=30)
 
 
 
@@ -413,13 +461,21 @@ def set_icon():
 
 def run_pyfile():
     exec(text1.get(0.0,END))
-
+taglist = dict()
 
 
 
 
 def add_tag(tagname,start,end,background,foreground):
     text1.tag_add(tagname,start,end)
+    id=tagname
+    _start = start
+    _end = end
+    bgcolor = background
+    fgcolor = foreground
+    config={"bgcolor":bgcolor,"fgcolor":fgcolor,"start":_start,"end":_end}
+    tagdict={"id":id,"config":config}
+    
     text1.tag_configure(tagname,background=background,foreground=foreground)
 
 
@@ -542,6 +598,7 @@ menu2_1.add_command(label=lang_main.paste, command=paste, accelerator='Ctrl+V')
 menu2_1.add_command(label=lang_main.selall, command=select_all, accelerator='Ctrl+A')
 menu2_1.add_command(label=lang_main.delete,command=lambda:text1.delete(SEL_FIRST,SEL_LAST),accelerator='Backspace')
 menu2_1.add_command(label=lang_main.tagset, command=add_tag_window)
+menu2_1.add_command(label=subwin.linksetwin_title,command=linkset_window)
 menu2_1.add_separator()
 menu2_1.add_command(label=lang_main.undo, command=undo)
 menu2_1.add_command(label=lang_main.redo, command=redo)
@@ -570,9 +627,10 @@ menu5_1.add_command(label=lang_main.bdtb,command=lambda:search(searchName=text1.
 menu1.add_cascade(label=lang_main.aboutmenu, menu=menu6_1)
 menu6_1.add_command(label=lang_main.aboutnotepad, command=about)
 menu6_1.add_command(label=lang_main.comhelp, command=command_help)
-menu_debug = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
-menu1.add_cascade(label="Debug", menu=menu_debug)
-menu_debug.add_command(label=lang_main.click_batch, command=run_bat)
+if debug_mode == 1:
+    menu_debug = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+    menu1.add_cascade(label="Debug", menu=menu_debug)
+    menu_debug.add_command(label=lang_main.click_batch, command=run_bat)
 win.config(menu=menu1)
 
 
@@ -604,6 +662,19 @@ for i in modpathlist:
 
 
 set_theme('light')
+import pywinstyles
+def drop_func(file):
+    save = True
+    path = file[0]
+    print("open file: "+str(file[0]))
+    cd = get_encoding(path)
+    win.title(lang_main.nortitle + path + '')
+    text1.delete(1.0, END)
+    file = open(path, encoding=str(cd))
+    text1.insert(1.0, file.read())
+    file.close()
+pywinstyles.apply_dnd(text1, drop_func)
+
 
 
 win.mainloop()

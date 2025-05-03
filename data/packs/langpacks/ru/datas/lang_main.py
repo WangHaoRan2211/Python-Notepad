@@ -58,5 +58,6 @@ setico='Установить иконку главного окна'
 #ABOUT MENU
 
 aboutnotepad='О блокноте'
+open_github = 'Открыть страницу GitHub'
 uplog='Журнал обновления'
 comhelp='Инструкция по командам'

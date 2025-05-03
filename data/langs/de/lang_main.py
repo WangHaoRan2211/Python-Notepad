@@ -58,6 +58,7 @@ setico='Hauptfenstersymbol einstellen'
 #about menu
 
 aboutnotepad='Über Notizblock'
+open_github = 'GitHub-Seite öffnen'
 uplog='Update-Protokoll'
 comhelp='Befehlsanleitung'
 

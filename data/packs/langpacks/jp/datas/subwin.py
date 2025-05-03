@@ -25,6 +25,14 @@ langwin_title='言語設定'
 langwin_info='言語設定はソフトウェアを再起動した後に有効になります。'
 ok='OK'
 
+#linksetwin
+linksetwin_title = 'ハイパーリンク設定'
+linkinputtag = '既存のタグ名を入力'
+linkinputlink = 'ハイパーリンクアドレスを入力'
+apply = '適用'
+close = '閉じる'
+
+
 #Long Texts
 comhelp='''open、-O、--open、/open: ファイルを自動的に開きます。 使用方法:python main.py --open {filePath} [Encoding]
 filePath: 開くファイルのパス(相対パスまたは絶対パスでも可)  Encoding: 開くファイルのエンコーディング(デフォルトはUTF - 8)

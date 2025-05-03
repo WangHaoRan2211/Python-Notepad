@@ -29,6 +29,13 @@ langwin_title='Paramètres de langue'
 langwin_info="Les paramètres de langue seront effectifs après le redémarrage du logiciel"
 ok="OK"
 
+#linksetwin
+linksetwin_title = 'Paramètres des hyperliens'
+linkinputtag = 'Entrer un nom de Tag existant'
+linkinputlink = 'Entrer adresse hypertexte'
+apply = 'Appliquer'
+close = 'Fermer'
+
 #Long Texts
 
 comhelp="""open, -O, --open, /open : ouvre automatiquement un fichier Utilisation : python main.py --open {filePath} [Encoding]

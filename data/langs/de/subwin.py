@@ -29,6 +29,13 @@ langwin_title='Spracheinstellung'
 langwin_info='Die Spracheinstellung wird nach dem Neustart der Software wirksam'
 ok='OK'
 
+#linksetwin
+linksetwin_title = 'Hyperlink-Einstellungen'
+linkinputtag = 'Vorhandenen Tag-Namen eingeben'
+linkinputlink = 'Hyperlink-Adresse eingeben'
+apply = 'Übernehmen'
+close = 'Schließen'
+
 #Long Texts
 
 

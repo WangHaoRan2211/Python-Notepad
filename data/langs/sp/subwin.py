@@ -29,6 +29,13 @@ langwin_title='Configuración del idioma'
 langwin_info='La configuración del idioma entrará en vigor después de reiniciar el software'
 ok='Determinar'
 
+#linksetwin
+linksetwin_title = 'Configuración de hipervínculos'
+linkinputtag = 'Ingrese un nombre de Tag existente'
+linkinputlink = 'Ingrese dirección de hipervínculo'
+apply = 'Aplicar'
+close = 'Cerrar'
+
 #Long Texts
 
 comhelp='''open、-O、--open、/open:método de uso para abrir automáticamente un archivo: python main.py --open {filePath} [Encoding]

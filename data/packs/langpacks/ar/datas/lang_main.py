@@ -52,5 +52,6 @@ setico = 'تعيين أيقونة النافذة الرئيسية'
 
 # about menu
 aboutnotepad = 'حول المستند النصي'
+open_github = 'فتح صفحة GitHub'
 uplog = 'سجل التحديثات'
 comhelp = 'شرح الأوامر'

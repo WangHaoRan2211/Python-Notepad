@@ -59,5 +59,6 @@ setico="Définir l'icône de la fenêtre principale"
 #about menu
 
 aboutnotepad="À propos du bloc-notes"
+open_github = 'Ouvrir la page GitHub'
 uplog="Journal des mises à jour"
 comhelp="Instructions de commande"

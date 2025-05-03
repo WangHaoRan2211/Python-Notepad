@@ -29,6 +29,16 @@ langwin_title='语言设置'
 langwin_info='语言设置将在重启软件后生效'
 ok='确定'
 
+#linksetwin
+
+
+linksetwin_title='超链接设置'
+linkinputtag='输入已经存在的Tag名'
+linkinputlink='输入超链接地址'
+apply='应用'
+close='关闭'
+
+
 #Long Texts
 
 comhelp='''open、-O、--open、/open:自动打开文件  使用方法:python main.py --open {filePath} [Encoding]

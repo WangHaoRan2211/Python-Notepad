@@ -58,6 +58,7 @@ setico='設置主窗口圖標'
 #about menu
 
 aboutnotepad='關於記事本'
+open_github = '開啟GitHub頁面'
 uplog='更新日誌'
 comhelp='命令說明'
 

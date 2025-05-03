@@ -58,5 +58,6 @@ setico='Set main window icon'
 #about menu
 
 aboutnotepad='About Notepad'
+open_github = 'Open GitHub page'
 uplog='Update log'
 comhelp='Command Help'

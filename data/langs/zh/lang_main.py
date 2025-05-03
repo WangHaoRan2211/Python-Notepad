@@ -58,5 +58,6 @@ setico='设置主窗口图标'
 #about menu
 
 aboutnotepad='关于记事本'
+open_github='打开GitHub页面'
 uplog='更新日志'
 comhelp='命令说明'

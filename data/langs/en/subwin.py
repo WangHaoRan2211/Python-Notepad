@@ -29,6 +29,13 @@ langwin_title='Language Settings'
 langwin_info='The language settings will take effect after restarting the software'
 ok='OK'
 
+linksetwin_title = 'Hyperlink Settings'
+linkinputtag = 'Enter an existing Tag name'
+linkinputlink = 'Enter hyperlink address'
+apply = 'Apply'
+close = 'Close'
+
+
 #Long Texts
 
 comhelp='''open、-O、--open、/open:Auto open file usage method: Python main. py -- open {filePath} [Encoding]

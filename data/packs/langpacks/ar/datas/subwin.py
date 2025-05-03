@@ -22,8 +22,16 @@ tagwin_remove='احذف تاغ'
 
 #langwin
 langwin_title='إعدادات اللغة'
-langwin_info='ست вступ إعدادات اللغة في الح силу بعد إعادة تشغيل البرنامج.'
+langwin_info='إعدادات اللغة نافذة المفعول بعد إعادة تشغيل البرنامج'
 ok='موافق'
+
+#linksetwin
+linksetwin_title = 'إعدادات الارتباط التشعبي'
+linkinputtag = 'أدخل اسم الوسم الموجود'
+linkinputlink = 'أدخل عنوان الارتباط التشعبي'
+apply = 'تطبيق'
+close = 'إغلاق'
+
 
 #Long Texts
 comhelp='''open、-O、--open、/open: افتح الملف تلقائياً  طريقة الاستخدام:python main.py --open {filePath} [Encoding]

@@ -52,5 +52,6 @@ setico='メインウィンドウのアイコンを設定'
 
 #about menu
 aboutnotepad='メモ帳について'
+open_github = 'GitHubページを開く'
 uplog='更新履歴'
 comhelp='コマンドの説明'

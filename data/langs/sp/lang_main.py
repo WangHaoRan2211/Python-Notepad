@@ -58,5 +58,6 @@ setico='Configurar el icono de la ventana principal'
 #about menu
 
 aboutnotepad='Sobre el cuaderno'
+open_github = 'Abrir página de GitHub'
 uplog='Actualizar el registro'
 comhelp='Descripción de la orden'
