@@ -1,6 +1,5 @@
 # #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import json
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
@@ -12,17 +11,19 @@ from sys import argv
 from zipfile import *
 from libs import chardet
 from tkinter.font import Font
-from json import *
+import json as js
 from tkinter.colorchooser import *
 save = False
 debug_mode=0
 font_size=15
 with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
-lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
+#lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
+lang_list=['简体中文','English']
 
 
-
+norfont="微软雅黑"
+norfnsize = 10
 
 if l=='简体中文':
     from data.langs.zh import lang_main,subwin
@@ -43,9 +44,9 @@ else:
 #exec('from data.packs.langpacks.gg.datas import lang_main,subwin')
 
 #print('Not langs name '+l)
+normal_font=norfont+' '+str(norfnsize)
 
-
-
+'''
 
 langpacklist = list()
 dbtype_list = os.listdir('data/packs/langpacks')
@@ -60,7 +61,7 @@ for i in range(0, len(langpacklist)):
     lpath = langpacklist[i]
     with open(lpath + '\\config.json', encoding='utf-8') as v:
         configjson = v.read()
-    config = json.loads(configjson)
+    config = js.loads(configjson)
     with open('version', encoding='utf-8') as hfg:
         ver = hfg.readlines()[0]
     if config["version"] == ver:
@@ -68,7 +69,7 @@ for i in range(0, len(langpacklist)):
         if l == config['langname']:
             #print('from data.packs.langpacks.' + dbtype_list[i] + '.datas import lang_main,subwin')
             exec('from data.packs.langpacks.' + dbtype_list[i] + '.datas import lang_main,subwin')
-
+'''
 
 
 
@@ -268,7 +269,7 @@ def apply(b, s, c2=0):
 
 
 def about():
-    showinfo(lang_main.verinfo, '1.3.0\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
+    showinfo(lang_main.verinfo, '1.4.0a1-250x01-v1x\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
 
 
 def cut():
@@ -328,10 +329,10 @@ def lanWindow():
         for item in os.scandir('data/packs/langpacks'):
             if item.is_dir():
                 with open(item.path+'\\config.json',encoding='utf-8')as afg:
-                    a=loads(afg.read())
+                    a=js.loads(afg.read())
                 if l1 == a['langname']:
                     c3.set(a['langname'])
-    Label(lw,text=subwin.langwin_info,foreground='#FF0000',font='微软雅黑 10').grid(row=1,column=0)
+    Label(lw,text=subwin.langwin_info,foreground='#FF0000',font=normal_font).grid(row=1,column=0)
     Button(lw,text=subwin.ok,command=lambda:set_lang(c3.get())).grid(row=2,column=1)
     lw.mainloop()
 
@@ -376,12 +377,14 @@ def linkset_window():
     lw.resizable(width=None, height=None)
     lw.title(subwin.linksetwin_title)
     lw.resizable(0,0)
-    Label(lw,text=subwin.linkinputtag,font='微软雅黑 10').grid(row=0,column=0)
+    Label(lw,text=subwin.linkinputtag,font=normal_font).grid(row=0,column=0)
     Elink=Entry(lw)
     Elink.grid(row=1,column=0,columnspan=2,ipadx=60)
-    Label(lw,text=subwin.linkinputlink,font='微软雅黑 10').grid(row=2,column=0,)
+    Elink.insert(0,"tag1")
+    Label(lw,text=subwin.linkinputlink,font=normal_font).grid(row=2,column=0,)
     Elink2=Entry(lw)
     Elink2.grid(row=3,column=0,columnspan=2,ipadx=60)
+    Elink2.insert(0,"https://www.github.com")
     Button(lw,text=subwin.apply,command=lambda:linkset(Elink.get(),Elink2.get())).grid(row=4,column=0,ipadx=30)
     Button(lw,text=subwin.close,command=lambda:lw.destroy()).grid(row=4,column=1,ipadx=30)
 
@@ -440,7 +443,7 @@ def command_help():
         if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
             print(commandHelp)
     Label(w3,text=lang_main.comhelp,font='微软雅黑 17 bold').grid()
-    Label(w3,text=commandHelp,font='微软雅黑 10').grid(row=1,column=0)
+    Label(w3,text=commandHelp,font=normal_font).grid(row=1,column=0)
     win.mainloop()
 
 
@@ -491,32 +494,32 @@ def add_tag_window(tagstart='',tagend=''):
     r2=Toplevel()
     r2.title(subwin.tagwin_title)
     r2.resizable(False,False)
-    Label(r2,text=subwin.tagwin_startext,font='微软雅黑 10').grid()
+    Label(r2,text=subwin.tagwin_startext,font=normal_font).grid()
     entr1=Entry(r2)
-    entr1.grid(row=1,column=0,columnspan=2)
-    Label(r2, text=subwin.tagwin_endtext,font='微软雅黑 10').grid(row=2,column=0)
+    entr1.grid(row=1,column=0,columnspan=2,ipadx=100)
+    Label(r2, text=subwin.tagwin_endtext,font=normal_font).grid(row=2,column=0)
     entr2 = Entry(r2)
-    entr2.grid(row=3, column=0,columnspan=2)
+    entr2.grid(row=3, column=0,columnspan=2,ipadx=100)
     entr1.insert(0,tagstart)
     entr2.insert(0, tagend)
-    Label(r2, text=subwin.tagwin_bg,font='微软雅黑 10').grid(row=4, column=0)
+    Label(r2, text=subwin.tagwin_bg,font=normal_font).grid(row=4, column=0)
     entr3=Entry(r2)
-    entr3.grid(row=4,column=1)
+    entr3.grid(row=4,column=1,ipadx=50)
     entr3.insert(0,'white')
     #cc1=Button(win,text='选择颜色',command=entr3.insert(0,askcolor()[2]))
     #cc1.grid(row=4,column=2)
-    Label(r2, text=subwin.tagwin_fg,font='微软雅黑 10').grid(row=5, column=0)
+    Label(r2, text=subwin.tagwin_fg,font=normal_font).grid(row=5, column=0)
     entr4 = Entry(r2)
     entr4.insert(0,'red')
-    entr4.grid(row=5, column=1)
-    Label(r2, text=subwin.tagwin_name,font='微软雅黑 10').grid(row=6, column=0)
+    entr4.grid(row=5, column=1,ipadx=50)
+    Label(r2, text=subwin.tagwin_name,font=normal_font).grid(row=6, column=0)
     entr5 = Entry(r2)
-    entr5.grid(row=6,column=1)
+    entr5.grid(row=6,column=1,ipadx=50)
     entr5.insert(0, 'tag1')
     addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get()))
-    addB.grid(row=7,column=0,ipadx=30,ipady=7)
+    addB.grid(row=7,column=0,ipadx=40,ipady=7)
     remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
-    remB.grid(row=7, column=1,ipadx=30,ipady=7)
+    remB.grid(row=7, column=1,ipadx=40,ipady=7)
     r2.mainloop()
 
 
@@ -549,6 +552,50 @@ if "--debug" in sys.argv or "-debug" in sys.argv or "-D" in sys.argv:
 
 
 
+
+
+def setting_win():
+    global text1
+    settingWin = Toplevel()
+    settingWin.title(lang_main.setmenu)
+    nb = Notebook(settingWin)
+    
+    # 添加标签页的Frame
+    editior_set_frame = Frame(nb)  # 父容器应为Notebook
+    color_set_frame = Frame(nb)
+    other_set_frame = Frame(nb)
+    about_frame = Frame(nb)
+    
+    style = Style(settingWin)
+
+    # 配置 Notebook 标签页的字体（核心步骤）
+    style.configure("TNotebook.Tab", 
+                    font=normal_font  # 修改为你想要的字体
+                    )
+
+    # 将Frame添加到Notebook
+    nb.add(editior_set_frame, text="编辑器设置")
+    nb.add(color_set_frame, text="外观设置")
+    nb.add(other_set_frame, text="杂项")
+    nb.add(about_frame, text="关于")
+    
+    # 正确布局Notebook
+    nb.grid(row=0, column=0, sticky="nsew")  # 移除settingWin参数
+    
+    # 确保父窗口的网格布局扩展
+    settingWin.grid_rowconfigure(0, weight=1)
+    settingWin.grid_columnconfigure(0, weight=1)
+    
+    settingWin.mainloop()
+
+
+
+
+
+
+
+
+
 win = Tk()
 if debug_mode == 1:
     win.title(lang_main.title + " - Debug Mode")
@@ -577,7 +624,7 @@ menu_right.add_cascade(label=lang_main.semenu, command=lambda:search(text1.get(S
 menu_right.add_cascade(label=lang_main.tagset,command=lambda:add_tag_window(tagstart=SEL_FIRST,tagend=SEL_LAST))
 menu_right.add_separator()
 menu_right.add_command(label=lang_main.click_batch,command=run_bat)
-menu_right.add_command(label='Close Window',command=win.quit)
+menu_right.add_command(label='Close Window',command=lambda:win.destroy())
 showPopoutMenu(text1, menu_right)
 
 
@@ -589,7 +636,7 @@ menu1_1.add_command(label=lang_main.save, command=save)
 menu1_1.add_command(label=lang_main.saveas, command=save_as)
 menu1_1.add_command(label=lang_main.open, command=open_file)
 menu1_1.add_separator()
-menu1_1.add_command(label=lang_main.exit, command=win.quit, accelerator='Alt+F4')
+menu1_1.add_command(label=lang_main.exit, command=lambda:win.destroy(), accelerator='Alt+F4')
 menu2_1=Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.editmenu,menu=menu2_1)
 menu2_1.add_command(label=lang_main.copy, command=copy, accelerator='Ctrl+C')
@@ -609,6 +656,7 @@ menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
 menu3_1.add_command(label=lang_main.click_batch, command=run_bat)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
+menu3_1.add_command(label=lang_main.setmenu,command=setting_win)
 menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
 menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
@@ -677,7 +725,7 @@ def drop_func(file):
 pywinstyles.apply_dnd(text1, drop_func)
 
 
-
 win.mainloop()
+
 
 
