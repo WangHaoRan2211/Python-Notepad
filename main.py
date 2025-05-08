@@ -18,8 +18,8 @@ debug_mode=0
 font_size=15
 with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
-#lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
-lang_list=['简体中文','English']
+lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
+
 
 
 norfont="微软雅黑"
@@ -46,7 +46,7 @@ else:
 #print('Not langs name '+l)
 normal_font=norfont+' '+str(norfnsize)
 
-'''
+
 
 langpacklist = list()
 dbtype_list = os.listdir('data/packs/langpacks')
@@ -69,7 +69,7 @@ for i in range(0, len(langpacklist)):
         if l == config['langname']:
             #print('from data.packs.langpacks.' + dbtype_list[i] + '.datas import lang_main,subwin')
             exec('from data.packs.langpacks.' + dbtype_list[i] + '.datas import lang_main,subwin')
-'''
+
 
 
 
@@ -550,48 +550,128 @@ if "--debug" in sys.argv or "-debug" in sys.argv or "-D" in sys.argv:
     print('debug mode on')
     debug_mode = 1
 
+'''
+谢谢你，Deepseek
 
+修改关键点说明：
 
+布局层级优化：
+
+python
+Toplevel
+└── main_container (Frame)  # 新增布局容器
+    ├── Label (row=0)      # 固定文字
+    └── Notebook (row=1)   # 可扩展区域
+使用中间容器main_container统一管理子组件，避免直接操作顶层窗口的布局
+
+权重配置改进：
+
+python
+main_container.grid_rowconfigure(1, weight=1)  # 仅Notebook所在行扩展
+main_container.grid_columnconfigure(0, weight=1)  # 整列横向扩展
+通过精确控制行权重，实现文字固定 + Notebook扩展的效果
+
+边距处理优化：
+
+python
+main_container.pack(expand=True, fill="both", padx=10, pady=5)
+将边距统一设置在容器外层，避免组件间的布局干扰
+
+sticky参数强化：
+
+python
+nb.grid(row=1, column=0, sticky="nsew")  # 必须设置全方向吸附
+确保Notebook在分配的空间内完全填充
+
+效果验证：
+
+当窗口缩放时，文字始终固定在左上角
+
+Notebook会随窗口尺寸变化自动扩展/收缩
+
+标签页字体已按normal_font的设定显示
+
+如果需要进一步微调文字位置，可以通过调整Label的padx/pady参数：
+
+python
+Label(...).grid(row=0, column=0, sticky="nw", pady=(0, 10))  # 下方增加10像素间距
+                                        ————————Deepseek AI
+'''
 
 
 def setting_win():
     global text1
     settingWin = Toplevel()
-    settingWin.title(lang_main.setmenu)
-    nb = Notebook(settingWin)
+    settingWin.title("设置面板")
     
-    # 添加标签页的Frame
-    editior_set_frame = Frame(nb)  # 父容器应为Notebook
+    # 创建主容器统一管理布局
+    main_container = Frame(settingWin)
+    main_container.pack(expand=True, fill="both", padx=10, pady=5)
+
+    # 左上角固定文字
+    Label(
+        main_container,
+        text="设置面板",
+        font=Font(family=norfont, size=40),
+        anchor='w'
+    ).grid(row=0, column=0, sticky="nw")
+
+    # 创建Notebook
+    nb = Notebook(main_container)
+    
+    # 配置Notebook样式
+    style = Style(settingWin)
+    style.configure("TNotebook.Tab", font=normal_font)
+    style.configure("TButton", font=normal_font)
+    
+    # 添加标签页Frame
+    editior_set_frame = Frame(nb)
     color_set_frame = Frame(nb)
     other_set_frame = Frame(nb)
     about_frame = Frame(nb)
     
-    style = Style(settingWin)
-
-    # 配置 Notebook 标签页的字体（核心步骤）
-    style.configure("TNotebook.Tab", 
-                    font=normal_font  # 修改为你想要的字体
-                    )
-
-    # 将Frame添加到Notebook
+    # 添加标签页
     nb.add(editior_set_frame, text="编辑器设置")
     nb.add(color_set_frame, text="外观设置")
     nb.add(other_set_frame, text="杂项")
     nb.add(about_frame, text="关于")
     
-    # 正确布局Notebook
-    nb.grid(row=0, column=0, sticky="nsew")  # 移除settingWin参数
+    # 布局Notebook
+    nb.grid(row=1, column=0, sticky="nsew")
+
+    # ============ 新增按钮区域 ============
+    # 创建按钮容器（放在main_container的第2行）
+    button_frame = Frame(main_container)
+    button_frame.grid(row=2, column=0, sticky="se", pady=10)  # 关键：sticky="se"右下对齐
+
+    # 创建按钮（注意父容器改为button_frame）
+    Label(button_frame,text="设置将于重启后生效",foreground="red",font=normal_font).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
+    b1=Button(
+        button_frame, 
+        text="恢复默认设置",  # 替换为实际函数
+    ).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
     
-    # 确保父窗口的网格布局扩展
-    settingWin.grid_rowconfigure(0, weight=1)
-    settingWin.grid_columnconfigure(0, weight=1)
+    b2=Button(
+        button_frame, 
+        text="退出",
+        command=settingWin.destroy
+    ).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
+    
+    b3=Button(
+        button_frame, 
+        text="确定",  # 替换为实际函数
+    ).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
+
+    # ============ 布局权重配置 ============
+    # 主容器布局配置
+    main_container.grid_rowconfigure(1, weight=1)  # Notebook行可扩展
+    main_container.grid_columnconfigure(0, weight=1)  # 整列横向扩展
+
+    # 确保窗口缩放时布局生效
+    settingWin.rowconfigure(0, weight=1)
+    settingWin.columnconfigure(0, weight=1)
     
     settingWin.mainloop()
-
-
-
-
-
 
 
 
@@ -613,15 +693,18 @@ text1.pack(fill=BOTH,expand=1)
 
 s1=StringVar()
 s1=lang_main.baidu
-
+fc=StringVar()
+fc.set("字数:"+str(len(text1.get(0.0,END))-1))
+l1=Label(win,textvariable=fc,font=normal_font).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
+#Label(win,text=" | ",font=norfont+' 10').pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 
 menu_right = Menu(win,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu_right.add_cascade(label=lang_main.copy, command=copy)
 menu_right.add_cascade(label=lang_main.paste, command=paste)
 menu_right.add_cascade(label=lang_main.selall, command=select_all)
-menu_right.add_cascade(label=lang_main.delete,command=lambda:text1.delete(SEL_FIRST,SEL_LAST))
-menu_right.add_cascade(label=lang_main.semenu, command=lambda:search(text1.get(SEL_FIRST,SEL_LAST),t=1))
-menu_right.add_cascade(label=lang_main.tagset,command=lambda:add_tag_window(tagstart=SEL_FIRST,tagend=SEL_LAST))
+menu_right.add_cascade(label=lang_main.delete,command=lambda:text1.delete(text1.index(SEL_FIRST),text1.index(SEL_LAST)))
+menu_right.add_cascade(label=lang_main.semenu, command=lambda:search(text1.get(text1.index(SEL_FIRST),text1.index(SEL_LAST)),t=1))
+menu_right.add_cascade(label=lang_main.tagset,command=lambda:add_tag_window(tagstart=text1.index(SEL_FIRST),tagend=text1.index(SEL_LAST)))
 menu_right.add_separator()
 menu_right.add_command(label=lang_main.click_batch,command=run_bat)
 menu_right.add_command(label='Close Window',command=lambda:win.destroy())
@@ -656,7 +739,7 @@ menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
 menu3_1.add_command(label=lang_main.click_batch, command=run_bat)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
-menu3_1.add_command(label=lang_main.setmenu,command=setting_win)
+menu3_1.add_command(label="设置面板",command=setting_win)
 menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
 menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
@@ -690,7 +773,10 @@ if len(argv)>1:
         command_help()
 
 
-
+def update():
+    global fc
+    fc.set("字数:"+str(len(text1.get(0.0,END))-1))
+    win.after(100,update) 
 
 '''modpathlist=list()
 for item in os.scandir('data\\packs\\addons'):
@@ -723,9 +809,10 @@ def drop_func(file):
     text1.insert(1.0, file.read())
     file.close()
 pywinstyles.apply_dnd(text1, drop_func)
-
+update()
 
 win.mainloop()
+
 
 
 
