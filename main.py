@@ -22,7 +22,6 @@ with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
 lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
 
 
-
 norfont="微软雅黑"
 norfnsize = 10
 
@@ -88,7 +87,7 @@ def save_as():
         with open(path, mode='w', encoding='utf-8') as sa:
             sa.write(text1.get(0.0, END))
         save = True
-        savemode.set("已保存 - "+path)
+        savemode.set(lang_main.footbar_filepath_saved+path)
         win.title(lang_main.nortitle + path)
 
 
@@ -105,7 +104,7 @@ def themeWindow():
     root = Toplevel(win)
     root.iconbitmap('icons/theme.ico')
     root.title(subwin.themewin_title)
-    root.geometry('100x75')
+    ##root.geometry('100x75')
     root.resizable(False, False)
     v1 = IntVar()
     with open('data/theme.ini', 'r+', encoding='utf-8') as th:
@@ -142,7 +141,7 @@ def save():
     if save == True:
         with open(path, mode='w', encoding='utf-8') as sa:
             sa.write(text1.get(0.0, END))
-        savemode.set("已保存 - "+path)
+        savemode.set(lang_main.footbar_filepath_saved+path)
     else:
         save_as()
 
@@ -152,7 +151,7 @@ def new():
     text1.delete(1.0, END)
     win.title(lang_main.new_window_title)
     save = False
-    savemode.set("未保存")
+    savemode.set(lang_main.footbar_filepath_notsaved)
 
 def get_encoding(file):
     with open(file,'rb') as f:
@@ -171,7 +170,7 @@ def open_file():
     file = open(path, encoding=str(cd))
     text1.insert(1.0, file.read())
     file.close()
-    savemode.set("已保存 - "+path)
+    savemode.set(lang_main.footbar_filepath_saved+path)
 
 
 
@@ -417,13 +416,13 @@ def command_run(command):
         else:
             fileEncode = argv[3]
         save = True
-        win.title('记事本-' + filePath)
+        win.title(lang_main.nortitle+filePath)
         text1.delete(1.0, END)
         path = filePath
         file = open(filePath, encoding=fileEncode)
         text1.insert(1.0, file.read())
         file.close()
-        savemode.set("已保存 - "+path)
+        savemode.set(lang_main.footbar_filepath_saved+path)
     if command == 'set-theme' or command == '/set-theme' or command == '--set-theme' or command == '-ST':
         #print(argv[2])
         if not (argv[2]=='dark' or argv[2]=='light'):
@@ -536,27 +535,28 @@ def add_tag_window(tagstart='',tagend=''):
     entr4 = Entry(r2)
     entr4.insert(0,'red')
     entr4.grid(row=5, column=1,ipadx=50,pady=2)
-    Label(r2, text=subwin.tagwin_name,font=normal_font).grid(row=6, column=0,pady=2)
+    Label(r2, text=subwin.tagwin_name,font=normal_font).grid(row=9, column=0,pady=2)
     entr5 = Entry(r2)
-    entr5.grid(row=6,column=1,ipadx=50,pady=2)
+    entr5.grid(row=9,column=1,ipadx=50,pady=2)
     entr5.insert(0, 'tag1')
-    Label(r2, text="选择字体",font=normal_font).grid(row=7, column=0,pady=2)
-    fontfamc=StringVar()
 
+
+    Label(r2, text=subwin.tagwin_choose_font_family,font=normal_font).grid(row=6, column=0,pady=2)
+    fontfamc=StringVar()
     fonts=font.families()
     butt = Combobox(r2, textvariable=fontfamc, values=fonts)
-    butt.grid(row=8, column=0,pady=2)
+    butt.grid(row=7, column=0,pady=2)
     butt.set(norfont)
-    Label(r2, text="选择字号",font=normal_font).grid(row=7, column=1,pady=2)
+    Label(r2, text=subwin.tagwin_choose_font_size,font=normal_font).grid(row=6, column=1,pady=2)
     fsize = Spinbox(r2, from_=5, to=55, state='readonly')
-    fsize.grid(row=8, column=1,pady=2)
+    fsize.grid(row=7, column=1,pady=2)
     fsize.set(str(norfnsize))
     fnadds=("/","bold", "italic", "underline","overstrike")
     fnaddvar=StringVar()
     fnaddvar.set("/")
-    Label(r2, text="选择字体属性",font=normal_font).grid(row=9, column=0,pady=2)
+    Label(r2, text=subwin.tagwin_choose_font_addio,font=normal_font).grid(row=8, column=0,pady=2)
     fnadd=Combobox(r2, textvariable=fnaddvar, values=fnadds)
-    fnadd.grid(row=9, column=1,pady=2)
+    fnadd.grid(row=8, column=1,pady=2)
     addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get(),fontfamc.get(),fsize.get(),fnaddvar.get()))
     addB.grid(row=10,column=0,ipadx=40,ipady=7,pady=2)
     remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
@@ -733,7 +733,7 @@ s1=lang_main.baidu
 fc=StringVar()
 fc.set("字数:"+str(len(text1.get(0.0,END))-1))
 savemode=StringVar()
-savemode.set("未保存")
+savemode.set(lang_main.footbar_filepath_notsaved)
 l1=Label(win,textvariable=fc,font=normal_font).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 l2=Label(win,textvariable=savemode,font=normal_font).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
 #Label(win,text=" | ",font=norfont+' 10').pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
@@ -815,7 +815,7 @@ if len(argv)>1:
 
 def update():
     global fc
-    fc.set("字数"+":"+str(len(text1.get(0.0,END))-1))
+    fc.set(lang_main.footbar_letter_count+":"+str(len(text1.get(0.0,END))-1))
     win.after(100,update) 
 
 '''modpathlist=list()
@@ -849,8 +849,12 @@ def drop_func(file):
     file = open(path, encoding=str(cd))
     text1.insert(1.0, file.read())
     file.close()
-    savemode.set("已保存 - "+path)
+    savemode.set(lang_main.footbar_filepath_saved+path)
 pywinstyles.apply_dnd(text1, drop_func)
 update()
-
+style_g = Style(win)
+style_g.configure("TNotebook.Tab", font=normal_font)
+style_g.configure("TButton", font=normal_font)
+style_g.configure("TRadiobutton", font=normal_font)
 win.mainloop()
+
