@@ -461,7 +461,7 @@ def command_help():
     if len(argv)>1:
         if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
             print(commandHelp)
-    Label(w3,text=lang_main.comhelp,font=Font(norfont,17,bold=True)).grid()
+    Label(w3,text=lang_main.comhelp,font=(norfont,17,"bold")).grid()
     Label(w3,text=commandHelp,font=normal_font).grid(row=1,column=0)
     win.mainloop()
 
