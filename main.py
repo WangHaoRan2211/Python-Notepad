@@ -469,7 +469,7 @@ taglist = dict()
 
 
 
-def add_tag(tagname,start,end,background,foreground,fontfamily=norfont,fontsize=str(norfnsize),fontstyle="/"):
+def add_tag(tagname,start,end,background,foreground,fontfamily="微软雅黑",fontsize=str(12),fontstyle="/"):
     text1.tag_add(tagname,start,end)
     id=tagname
     _start = start
@@ -515,14 +515,10 @@ def add_tag_window(tagstart='',tagend=''):
     entr4 = Entry(r2)
     entr4.insert(0,'red')
     entr4.grid(row=5, column=1)
-    Label(r2, text=subwin.tagwin_name,font='微软雅黑 10').grid(row=6, column=0)
+    Label(r2, text=subwin.tagwin_name,font='微软雅黑 10').grid(row=9, column=0)
     entr5 = Entry(r2)
-    entr5.grid(row=6,column=1)
+    entr5.grid(row=9,column=1)
     entr5.insert(0, 'tag1')
-    addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get()))
-    addB.grid(row=7,column=0,ipadx=30,ipady=7)
-    remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
-    remB.grid(row=7, column=1,ipadx=30,ipady=7)
 
 
     Label(r2, text=subwin.tagwin_choose_font_family,font="微软雅黑 10").grid(row=6, column=0,pady=2)
