@@ -1,6 +1,5 @@
 # #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import json
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
@@ -12,8 +11,10 @@ from sys import argv
 from zipfile import *
 from libs import chardet
 from tkinter.font import Font
-from json import *
+import json as js
 from tkinter.colorchooser import *
+
+from tkinter import font
 save = False
 debug_mode=0
 font_size=15
@@ -60,7 +61,7 @@ for i in range(0, len(langpacklist)):
     lpath = langpacklist[i]
     with open(lpath + '\\config.json', encoding='utf-8') as v:
         configjson = v.read()
-    config = json.loads(configjson)
+    config = js.loads(configjson)
     with open('version', encoding='utf-8') as hfg:
         ver = hfg.readlines()[0]
     if config["version"] == ver:
@@ -268,7 +269,7 @@ def apply(b, s, c2=0):
 
 
 def about():
-    showinfo(lang_main.verinfo, '1.3.0\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
+    showinfo(lang_main.verinfo, '1.3.1-250502-v15\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
 
 
 def cut():
@@ -328,7 +329,7 @@ def lanWindow():
         for item in os.scandir('data/packs/langpacks'):
             if item.is_dir():
                 with open(item.path+'\\config.json',encoding='utf-8')as afg:
-                    a=loads(afg.read())
+                    a=js.loads(afg.read())
                 if l1 == a['langname']:
                     c3.set(a['langname'])
     Label(lw,text=subwin.langwin_info,foreground='#FF0000',font='微软雅黑 10').grid(row=1,column=0)
@@ -379,9 +380,11 @@ def linkset_window():
     Label(lw,text=subwin.linkinputtag,font='微软雅黑 10').grid(row=0,column=0)
     Elink=Entry(lw)
     Elink.grid(row=1,column=0,columnspan=2,ipadx=60)
+    Elink.insert(0,"tag1")
     Label(lw,text=subwin.linkinputlink,font='微软雅黑 10').grid(row=2,column=0,)
     Elink2=Entry(lw)
     Elink2.grid(row=3,column=0,columnspan=2,ipadx=60)
+    Elink2.insert(0,"https://www.github.com")
     Button(lw,text=subwin.apply,command=lambda:linkset(Elink.get(),Elink2.get())).grid(row=4,column=0,ipadx=30)
     Button(lw,text=subwin.close,command=lambda:lw.destroy()).grid(row=4,column=1,ipadx=30)
 
@@ -466,17 +469,20 @@ taglist = dict()
 
 
 
-def add_tag(tagname,start,end,background,foreground):
+def add_tag(tagname,start,end,background,foreground,fontfamily=norfont,fontsize=str(norfnsize),fontstyle="/"):
     text1.tag_add(tagname,start,end)
     id=tagname
     _start = start
     _end = end
     bgcolor = background
     fgcolor = foreground
-    config={"bgcolor":bgcolor,"fgcolor":fgcolor,"start":_start,"end":_end}
+    if fontstyle == "/":
+        tgfont=fontfamily,fontsize
+    else:
+        tgfont=fontfamily,fontsize,fontstyle
+    config={"bgcolor":bgcolor,"fgcolor":fgcolor,"start":_start,"end":_end,"font":tgfont}
     tagdict={"id":id,"config":config}
-    
-    text1.tag_configure(tagname,background=background,foreground=foreground)
+    text1.tag_configure(tagname,background=background,foreground=foreground,font=tgfont)
 
 
 def remove_tag(tagname):
@@ -517,6 +523,28 @@ def add_tag_window(tagstart='',tagend=''):
     addB.grid(row=7,column=0,ipadx=30,ipady=7)
     remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
     remB.grid(row=7, column=1,ipadx=30,ipady=7)
+
+
+    Label(r2, text=subwin.tagwin_choose_font_family,font="微软雅黑 10").grid(row=6, column=0,pady=2)
+    fontfamc=StringVar()
+    fonts=font.families()
+    butt = Combobox(r2, textvariable=fontfamc, values=fonts)
+    butt.grid(row=7, column=0,pady=2)
+    butt.set("微软雅黑")
+    Label(r2, text=subwin.tagwin_choose_font_size,font="微软雅黑 10").grid(row=6, column=1,pady=2)
+    fsize = Spinbox(r2, from_=5, to=55, state='readonly')
+    fsize.grid(row=7, column=1,pady=2)
+    fsize.set(str(12))
+    fnadds=("/","bold", "italic", "underline","overstrike")
+    fnaddvar=StringVar()
+    fnaddvar.set("/")
+    Label(r2, text=subwin.tagwin_choose_font_addio,font="微软雅黑 10").grid(row=8, column=0,pady=2)
+    fnadd=Combobox(r2, textvariable=fnaddvar, values=fnadds)
+    fnadd.grid(row=8, column=1,pady=2)
+    addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get(),fontfamc.get(),fsize.get(),fnaddvar.get()))
+    addB.grid(row=10,column=0,ipadx=40,ipady=7,pady=2)
+    remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
+    remB.grid(row=10, column=1,ipadx=40,ipady=7,pady=2)
     r2.mainloop()
 
 
@@ -577,7 +605,7 @@ menu_right.add_cascade(label=lang_main.semenu, command=lambda:search(text1.get(S
 menu_right.add_cascade(label=lang_main.tagset,command=lambda:add_tag_window(tagstart=SEL_FIRST,tagend=SEL_LAST))
 menu_right.add_separator()
 menu_right.add_command(label=lang_main.click_batch,command=run_bat)
-menu_right.add_command(label='Close Window',command=win.quit)
+menu_right.add_command(label='Close Window',command=lambda:win.destroy())
 showPopoutMenu(text1, menu_right)
 
 
@@ -589,7 +617,7 @@ menu1_1.add_command(label=lang_main.save, command=save)
 menu1_1.add_command(label=lang_main.saveas, command=save_as)
 menu1_1.add_command(label=lang_main.open, command=open_file)
 menu1_1.add_separator()
-menu1_1.add_command(label=lang_main.exit, command=win.quit, accelerator='Alt+F4')
+menu1_1.add_command(label=lang_main.exit, command=lambda:win.destroy(), accelerator='Alt+F4')
 menu2_1=Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
 menu1.add_cascade(label=lang_main.editmenu,menu=menu2_1)
 menu2_1.add_command(label=lang_main.copy, command=copy, accelerator='Ctrl+C')
