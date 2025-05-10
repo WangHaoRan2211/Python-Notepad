@@ -61,3 +61,8 @@ aboutnotepad='Sobre el cuaderno'
 open_github = 'Abrir página de GitHub'
 uplog='Actualizar el registro'
 comhelp='Descripción de la orden'
+
+footbar_letter_count = 'Recuento de palabras'
+footbar_filepath_notsaved = 'No guardado'
+footbar_filepath_saved = 'Guardado - '
+

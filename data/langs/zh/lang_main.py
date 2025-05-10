@@ -61,3 +61,8 @@ aboutnotepad='关于记事本'
 open_github='打开GitHub页面'
 uplog='更新日志'
 comhelp='命令说明'
+
+footbar_letter_count='字数'
+footbar_filepath_notsaved='未保存'
+footbar_filepath_saved='已保存 - '
+

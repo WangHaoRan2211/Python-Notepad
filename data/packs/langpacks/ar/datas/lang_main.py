@@ -3,6 +3,7 @@ new_window_title = 'غير مسمى'
 nortitle = 'مستند نصي - '
 title = 'مستند نصي - غير مسمى'
 
+
 bing = 'بينج'
 baidu = 'بايدو'
 sougo = 'سوجو'
@@ -28,6 +29,7 @@ saveas = 'حفظ باسم'
 open = 'فتح'
 exit = 'إغلاق'
 
+
 # edit menu
 copy = 'نسخ'
 cut = 'قص'
@@ -38,6 +40,7 @@ tagset = 'إعداد العلامات'
 undo = 'تراجع'
 redo = 'إعادة'
 
+
 # setting menu
 fontset = 'خط'
 themeset = 'سمة'
@@ -45,13 +48,20 @@ click_batch = 'تشغيل ملفات الدفعة بضغطة واحدة'
 run_py = 'تشغيل بايثون'
 lang_set = 'إعداد اللغة'
 
+
 # window menu
 zoom = 'تكبير'
 iconify = 'تصغير'
 setico = 'تعيين أيقونة النافذة الرئيسية'
+
 
 # about menu
 aboutnotepad = 'حول المستند النصي'
 open_github = 'فتح صفحة GitHub'
 uplog = 'سجل التحديثات'
 comhelp = 'شرح الأوامر'
+
+
+footbar_letter_count = 'عدد الكلمات'
+footbar_filepath_notsaved = 'غير محفوظ'
+footbar_filepath_saved = 'محفوظ - '

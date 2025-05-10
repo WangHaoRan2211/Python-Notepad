@@ -62,3 +62,7 @@ open_github = '開啟GitHub頁面'
 uplog='更新日誌'
 comhelp='命令說明'
 
+footbar_letter_count = '字數'
+footbar_filepath_notsaved = '未保存'
+footbar_filepath_saved = '已儲存 - '
+

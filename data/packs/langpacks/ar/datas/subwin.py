@@ -19,6 +19,9 @@ tagwin_fg='أدخل لون المقدمة'
 tagwin_name='أدخل اسم التاغ'
 tagwin_add='أضف تاغ'
 tagwin_remove='احذف تاغ'
+tagwin_choose_font_family = 'اختر عائلة الخط'
+tagwin_choose_font_size = 'اختر حجم الخط'
+tagwin_choose_font_addio = 'اختر خصائص الخط'
 
 #langwin
 langwin_title='إعدادات اللغة'
