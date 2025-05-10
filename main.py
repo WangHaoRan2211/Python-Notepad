@@ -13,9 +13,10 @@ from libs import chardet
 from tkinter.font import Font
 import json as js
 from tkinter.colorchooser import *
+from tkinter import font
 save = False
+path = ''
 debug_mode=0
-font_size=15
 with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
 lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
@@ -81,11 +82,15 @@ def save_as():
     global save, path
     if save == True:
         showwarning(subwin.sas_wtitle, subwin.sas_wtext)
-    path = asksaveasfilename(defaultextension='.txt', filetypes=filetype, title=lang_main.saveas)
-    with open(path, mode='w', encoding='utf-8') as sa:
-        sa.write(text1.get(0.0, END))
-    save = True
-    win.title(lang_main.nortitle + path)
+    tmppath = asksaveasfilename(defaultextension='.txt', filetypes=filetype, title=lang_main.saveas)
+    if tmppath != '':
+        path = tmppath
+        with open(path, mode='w', encoding='utf-8') as sa:
+            sa.write(text1.get(0.0, END))
+        save = True
+        savemode.set("已保存 - "+path)
+        win.title(lang_main.nortitle + path)
+
 
 
 def toggle_theme():
@@ -133,18 +138,21 @@ def theme():
 
 
 def save():
-    global save
+    global save,path
     if save == True:
         with open(path, mode='w', encoding='utf-8') as sa:
             sa.write(text1.get(0.0, END))
+        savemode.set("已保存 - "+path)
     else:
         save_as()
 
 
 def new():
+    global save
     text1.delete(1.0, END)
     win.title(lang_main.new_window_title)
     save = False
+    savemode.set("未保存")
 
 def get_encoding(file):
     with open(file,'rb') as f:
@@ -152,15 +160,18 @@ def get_encoding(file):
         return tmp['encoding']
     
 def open_file():
+    global save, path
     save = True
     s = askopenfile(defaultextension='.txt', filetypes=filetype, title=lang_main.open)
     path = s.name
+    print(path)
     cd = get_encoding(path)
     win.title(lang_main.nortitle + path + '')
     text1.delete(1.0, END)
     file = open(path, encoding=str(cd))
     text1.insert(1.0, file.read())
     file.close()
+    savemode.set("已保存 - "+path)
 
 
 
@@ -247,7 +258,7 @@ def mainwindow():
     size = Spinbox(w2, from_=5, to=55, state='readonly')
     size.grid(row=0, column=1)
     size.set('12')
-    b3 = Button(w2, text=lang_main.apply, command=lambda: apply(butt.get(), size.get(), c))
+    b3 = Button(w2, text=lang_main.apply, command=lambda: apply_font_set(butt.get(), size.get(), c))
     c = IntVar()
     #c1 = Checkbutton(w2, text='Bold', variable=c)
     #c1.grid(row=2, column=0)
@@ -257,7 +268,7 @@ def mainwindow():
     w2.mainloop()
 
 
-def apply(b, s, c2=0):
+def apply_font_set(b, s, c2=0):
     bold_font = Font(family=b,size=s,weight="bold")
     _font = Font(family=b, size=s,weight="normal")
     #text1.tag_configure("BOLD", font=bold_font)
@@ -350,8 +361,9 @@ def show_xterm_cursor(event=None):
 def click_to_website(event=None,link=''):
     print("click to "+link)
     wb.open(link)
-
+linklist=list()
 def linkset(tag, link1):
+    global linklist
     print(tag + link1)
     text1.tag_bind(
         tag, 
@@ -367,6 +379,10 @@ def linkset(tag, link1):
 
     # 使用 lambda 传递 event 和 link 参数
     text1.tag_bind(tag, '<Button-1>', lambda event, link=link1: click_to_website(link=link))
+
+    links={"tag":tag,"link":link1}
+    linklist.append(links)
+    print(linklist)
 
     
 
@@ -391,6 +407,7 @@ def linkset_window():
 
 
 def command_run(command):
+    global save,path
     #print(len(argv))
     #print(argv)
     if command == 'open' or command == '/open' or command == '--open' or command == '-O':
@@ -402,9 +419,11 @@ def command_run(command):
         save = True
         win.title('记事本-' + filePath)
         text1.delete(1.0, END)
+        path = filePath
         file = open(filePath, encoding=fileEncode)
         text1.insert(1.0, file.read())
         file.close()
+        savemode.set("已保存 - "+path)
     if command == 'set-theme' or command == '/set-theme' or command == '--set-theme' or command == '-ST':
         #print(argv[2])
         if not (argv[2]=='dark' or argv[2]=='light'):
@@ -442,13 +461,13 @@ def command_help():
     if len(argv)>1:
         if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
             print(commandHelp)
-    Label(w3,text=lang_main.comhelp,font='微软雅黑 17 bold').grid()
+    Label(w3,text=lang_main.comhelp,font=Font(norfont,17,bold=True)).grid()
     Label(w3,text=commandHelp,font=normal_font).grid(row=1,column=0)
     win.mainloop()
 
 
 def set_icon():
-    iconPath=askopenfilename(filetypes=[('图标文件','*.ico'),('所有文件','*.*')],title='Select Icon File')
+    iconPath=askopenfilename(filetypes=[('Icon Files','*.ico'),('All Files','*.*')],title='Select Icon File')
     win.iconbitmap(iconPath)
 
 
@@ -469,17 +488,21 @@ taglist = dict()
 
 
 
-def add_tag(tagname,start,end,background,foreground):
+def add_tag(tagname,start,end,background,foreground,fontfamily=norfont,fontsize=str(norfnsize),fontstyle="/"):
     text1.tag_add(tagname,start,end)
     id=tagname
     _start = start
     _end = end
     bgcolor = background
     fgcolor = foreground
-    config={"bgcolor":bgcolor,"fgcolor":fgcolor,"start":_start,"end":_end}
+    if fontstyle == "/":
+        tgfont=fontfamily,fontsize
+    else:
+        tgfont=fontfamily,fontsize,fontstyle
+    config={"bgcolor":bgcolor,"fgcolor":fgcolor,"start":_start,"end":_end,"font":tgfont}
     tagdict={"id":id,"config":config}
-    
-    text1.tag_configure(tagname,background=background,foreground=foreground)
+    print(tagdict)
+    text1.tag_configure(tagname,background=background,foreground=foreground,font=tgfont)
 
 
 def remove_tag(tagname):
@@ -491,43 +514,57 @@ def nor_size():
 
 
 def add_tag_window(tagstart='',tagend=''):
+    global norfnsize
     r2=Toplevel()
     r2.title(subwin.tagwin_title)
     r2.resizable(False,False)
-    Label(r2,text=subwin.tagwin_startext,font=normal_font).grid()
+    Label(r2,text=subwin.tagwin_startext,font=normal_font).grid(pady=2)
     entr1=Entry(r2)
-    entr1.grid(row=1,column=0,columnspan=2,ipadx=100)
-    Label(r2, text=subwin.tagwin_endtext,font=normal_font).grid(row=2,column=0)
+    entr1.grid(row=1,column=0,columnspan=2,ipadx=100,pady=2)
+    Label(r2, text=subwin.tagwin_endtext,font=normal_font).grid(row=2,column=0,pady=2)
     entr2 = Entry(r2)
-    entr2.grid(row=3, column=0,columnspan=2,ipadx=100)
+    entr2.grid(row=3, column=0,columnspan=2,ipadx=100,pady=2)
     entr1.insert(0,tagstart)
     entr2.insert(0, tagend)
-    Label(r2, text=subwin.tagwin_bg,font=normal_font).grid(row=4, column=0)
+    Label(r2, text=subwin.tagwin_bg,font=normal_font).grid(row=4, column=0,pady=2)
     entr3=Entry(r2)
-    entr3.grid(row=4,column=1,ipadx=50)
+    entr3.grid(row=4,column=1,ipadx=50,pady=2)
     entr3.insert(0,'white')
     #cc1=Button(win,text='选择颜色',command=entr3.insert(0,askcolor()[2]))
     #cc1.grid(row=4,column=2)
-    Label(r2, text=subwin.tagwin_fg,font=normal_font).grid(row=5, column=0)
+    Label(r2, text=subwin.tagwin_fg,font=normal_font).grid(row=5, column=0,pady=2)
     entr4 = Entry(r2)
     entr4.insert(0,'red')
-    entr4.grid(row=5, column=1,ipadx=50)
-    Label(r2, text=subwin.tagwin_name,font=normal_font).grid(row=6, column=0)
+    entr4.grid(row=5, column=1,ipadx=50,pady=2)
+    Label(r2, text=subwin.tagwin_name,font=normal_font).grid(row=6, column=0,pady=2)
     entr5 = Entry(r2)
-    entr5.grid(row=6,column=1,ipadx=50)
+    entr5.grid(row=6,column=1,ipadx=50,pady=2)
     entr5.insert(0, 'tag1')
-    addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get()))
-    addB.grid(row=7,column=0,ipadx=40,ipady=7)
+    Label(r2, text="选择字体",font=normal_font).grid(row=7, column=0,pady=2)
+    fontfamc=StringVar()
+
+    fonts=font.families()
+    butt = Combobox(r2, textvariable=fontfamc, values=fonts)
+    butt.grid(row=8, column=0,pady=2)
+    butt.set(norfont)
+    Label(r2, text="选择字号",font=normal_font).grid(row=7, column=1,pady=2)
+    fsize = Spinbox(r2, from_=5, to=55, state='readonly')
+    fsize.grid(row=8, column=1,pady=2)
+    fsize.set(str(norfnsize))
+    fnadds=("/","bold", "italic", "underline","overstrike")
+    fnaddvar=StringVar()
+    fnaddvar.set("/")
+    Label(r2, text="选择字体属性",font=normal_font).grid(row=9, column=0,pady=2)
+    fnadd=Combobox(r2, textvariable=fnaddvar, values=fnadds)
+    fnadd.grid(row=9, column=1,pady=2)
+    addB=Button(r2,text=subwin.tagwin_add,command=lambda:add_tag(entr5.get(),entr1.get(),entr2.get(),entr3.get(),entr4.get(),fontfamc.get(),fsize.get(),fnaddvar.get()))
+    addB.grid(row=10,column=0,ipadx=40,ipady=7,pady=2)
     remB = Button(r2, text=subwin.tagwin_remove,command=lambda:remove_tag(entr5.get()))
-    remB.grid(row=7, column=1,ipadx=40,ipady=7)
+    remB.grid(row=10, column=1,ipadx=40,ipady=7,pady=2)
     r2.mainloop()
 
 
-def modif_fontsize():
-    text1.configure(font=Font(size=font_size+2))
 
-def modif_fontsize2():
-    text1.configure(font=Font(size=font_size-2))
 
 
 from tkinter import scrolledtext
@@ -695,7 +732,10 @@ s1=StringVar()
 s1=lang_main.baidu
 fc=StringVar()
 fc.set("字数:"+str(len(text1.get(0.0,END))-1))
+savemode=StringVar()
+savemode.set("未保存")
 l1=Label(win,textvariable=fc,font=normal_font).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
+l2=Label(win,textvariable=savemode,font=normal_font).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
 #Label(win,text=" | ",font=norfont+' 10').pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 
 menu_right = Menu(win,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
@@ -769,13 +809,13 @@ win.config(menu=menu1)
 if len(argv)>1:
     command_run(argv[1])
     if argv[1] == 'help' or argv[1] == '/help' or argv[1] == '--help' or argv[1] == '-H':
-        win.quit()
+        win.destroy()
         command_help()
 
 
 def update():
     global fc
-    fc.set("字数:"+str(len(text1.get(0.0,END))-1))
+    fc.set("字数"+":"+str(len(text1.get(0.0,END))-1))
     win.after(100,update) 
 
 '''modpathlist=list()
@@ -799,6 +839,7 @@ for i in modpathlist:
 set_theme('light')
 import pywinstyles
 def drop_func(file):
+    global save,path
     save = True
     path = file[0]
     print("open file: "+str(file[0]))
@@ -808,11 +849,8 @@ def drop_func(file):
     file = open(path, encoding=str(cd))
     text1.insert(1.0, file.read())
     file.close()
+    savemode.set("已保存 - "+path)
 pywinstyles.apply_dnd(text1, drop_func)
 update()
 
 win.mainloop()
-
-
-
-
