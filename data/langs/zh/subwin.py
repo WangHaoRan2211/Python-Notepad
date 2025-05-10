@@ -22,6 +22,9 @@ tagwin_fg='输入前景色'
 tagwin_name='输入Tag名'
 tagwin_add='添加Tag'
 tagwin_remove='移除Tag'
+tagwin_choose_font_family='选择字体'
+tagwin_choose_font_size='选择字号'
+tagwin_choose_font_addio='选择字体属性'
 
 #langwin
 

@@ -22,6 +22,9 @@ tagwin_fg='Enter foreground color'
 tagwin_name='Enter Tag Name'
 tagwin_add='Add Tag'
 tagwin_remove='Remove Tag'
+tagwin_choose_font_family = 'Select font family'
+tagwin_choose_font_size = 'Select font size'
+tagwin_choose_font_addio = 'Select font attributes'
 
 #langwin
 

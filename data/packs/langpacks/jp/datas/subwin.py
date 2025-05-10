@@ -19,6 +19,9 @@ tagwin_fg='前景色を入力してください'
 tagwin_name='タグ名を入力してください'
 tagwin_add='タグを追加'
 tagwin_remove='タグを削除'
+tagwin_choose_font_family = 'フォントファミリーを選択'
+tagwin_choose_font_size = 'フォントサイズを選択'
+tagwin_choose_font_addio = 'フォント属性を選択'
 
 #langwin
 langwin_title='言語設定'

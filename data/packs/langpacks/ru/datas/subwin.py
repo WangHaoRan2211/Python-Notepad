@@ -22,6 +22,9 @@ tagwin_fg='введите цвет текста'
 tagwin_name='введите имя Tag'
 tagwin_add='добавить Tag'
 tagwin_remove='удалить Tag'
+tagwin_choose_font_family = 'Выбрать семейство шрифтов'
+tagwin_choose_font_size = 'Выбрать размер шрифта'
+tagwin_choose_font_addio = 'Выбрать атрибуты шрифта'
 
 #язык
 

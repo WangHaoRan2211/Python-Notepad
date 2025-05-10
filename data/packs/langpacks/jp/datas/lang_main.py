@@ -50,8 +50,19 @@ zoom='最大化'
 iconify='最小化'
 setico='メインウィンドウのアイコンを設定'
 
+
+
 #about menu
 aboutnotepad='メモ帳について'
 open_github = 'GitHubページを開く'
 uplog='更新履歴'
 comhelp='コマンドの説明'
+
+
+
+
+
+footbar_letter_count = '文字数'
+footbar_filepath_notsaved = '未保存'
+footbar_filepath_saved = '保存済み - '
+

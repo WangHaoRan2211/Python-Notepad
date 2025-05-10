@@ -22,6 +22,9 @@ tagwin_fg="Entrez la couleur de premier plan"
 tagwin_name="Entrez le nom du tag"
 tagwin_add="Ajouter un tag"
 tagwin_remove="Supprimer un tag"
+tagwin_choose_font_family = 'Choisir la famille de polices'
+tagwin_choose_font_size = 'Choisir la taille de police'
+tagwin_choose_font_addio = 'Choisir les attributs de police'
 
 #langwin
 

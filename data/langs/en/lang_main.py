@@ -61,3 +61,8 @@ aboutnotepad='About Notepad'
 open_github = 'Open GitHub page'
 uplog='Update log'
 comhelp='Command Help'
+
+footbar_letter_count = 'Word count'
+footbar_filepath_notsaved = 'Not saved'
+footbar_filepath_saved = 'Saved - '
+

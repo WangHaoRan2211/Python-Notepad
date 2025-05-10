@@ -62,3 +62,7 @@ open_github = 'GitHub-Seite öffnen'
 uplog='Update-Protokoll'
 comhelp='Befehlsanleitung'
 
+footbar_letter_count = 'Wortzahl'
+footbar_filepath_notsaved = 'Nicht gespeichert'
+footbar_filepath_saved = 'Gespeichert - '
+

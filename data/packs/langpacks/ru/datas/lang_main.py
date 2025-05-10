@@ -61,3 +61,8 @@ aboutnotepad='О блокноте'
 open_github = 'Открыть страницу GitHub'
 uplog='Журнал обновления'
 comhelp='Инструкция по командам'
+
+footbar_letter_count = 'Количество слов'
+footbar_filepath_notsaved = 'Не сохранено'
+footbar_filepath_saved = 'Сохранено - '
+

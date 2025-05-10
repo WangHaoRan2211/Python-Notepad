@@ -22,6 +22,9 @@ tagwin_fg='Geben Sie die Vordergrundfarbe ein'
 tagwin_name='Geben Sie den Tag-Namen ein'
 tagwin_add='Tag hinzufügen'
 tagwin_remove='Tag entfernen'
+tagwin_choose_font_family = 'Schriftfamilie auswählen'
+tagwin_choose_font_size = 'Schriftgröße auswählen'
+tagwin_choose_font_addio = 'Schrifteigenschaften auswählen'
 
 #langwin
 

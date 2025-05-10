@@ -22,6 +22,9 @@ tagwin_fg='Introduzca el color del primer plano'
 tagwin_name='Introduzca el nombre de la etiqueta'
 tagwin_add='Añadir etiqueta'
 tagwin_remove='Eliminar la etiqueta'
+tagwin_choose_font_family = 'Seleccionar familia de fuentes'
+tagwin_choose_font_size = 'Seleccionar tamaño de fuente'
+tagwin_choose_font_addio = 'Seleccionar atributos de fuente'
 
 #langwin
 
