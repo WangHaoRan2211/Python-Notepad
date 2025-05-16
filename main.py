@@ -8,12 +8,14 @@ import os
 import webbrowser as wb
 from libs.sv_ttk import *
 from sys import argv
+import sys
 from zipfile import *
 from libs import chardet
 from tkinter.font import Font
 import json as js
 from tkinter.colorchooser import *
 from tkinter import font
+sys.dont_write_bytecode = True
 save = False
 path = ''
 debug_mode=0
@@ -21,9 +23,22 @@ with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
     l=fh.read()
 lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
 
-
-norfont="微软雅黑"
-norfnsize = 10
+with open('data\\config.json',encoding='utf-8')as cfg:
+    config=js.load(cfg)
+    print(config)
+norfont=config['global_bgfont']
+norfnsize = config['global_bgfontsize']
+txbg=config['textbgcolor']
+thm=config['theme']
+txnorfg=config['textfont_color']
+txnorfont=config['textfont_family']
+txnorfnsize = config['textfont_size']
+menu_font=config['menu_font_family']
+menu_fnsize = config['menu_font_size']
+menu_bg=config['menu_bgcolor']
+menu_active_bg=config['menu_active_bgcolor']
+menu_fg=config['menu_fgcolor']
+menu_active_fg=config['menu_active_fgcolor']
 
 if l=='简体中文':
     from data.langs.zh import lang_main,subwin
@@ -253,10 +268,10 @@ def mainwindow():
     val = StringVar()
     butt = Combobox(w2, textvariable=val, values=fonts)
     butt.grid(row=0, column=0)
-    butt.set('Consolas')
+    butt.set(txnorfont)
     size = Spinbox(w2, from_=5, to=55, state='readonly')
     size.grid(row=0, column=1)
-    size.set('12')
+    size.set(str(txnorfnsize))
     b3 = Button(w2, text=lang_main.apply, command=lambda: apply_font_set(butt.get(), size.get(), c))
     c = IntVar()
     #c1 = Checkbutton(w2, text='Bold', variable=c)
@@ -546,11 +561,11 @@ def add_tag_window(tagstart='',tagend=''):
     fonts=font.families()
     butt = Combobox(r2, textvariable=fontfamc, values=fonts)
     butt.grid(row=7, column=0,pady=2)
-    butt.set(norfont)
+    butt.set(txnorfont)
     Label(r2, text=subwin.tagwin_choose_font_size,font=normal_font).grid(row=6, column=1,pady=2)
     fsize = Spinbox(r2, from_=5, to=55, state='readonly')
     fsize.grid(row=7, column=1,pady=2)
-    fsize.set(str(norfnsize))
+    fsize.set(str(txnorfnsize))
     fnadds=("/","bold", "italic", "underline","overstrike")
     fnaddvar=StringVar()
     fnaddvar.set("/")
@@ -587,53 +602,6 @@ if "--debug" in sys.argv or "-debug" in sys.argv or "-D" in sys.argv:
     print('debug mode on')
     debug_mode = 1
 
-'''
-谢谢你，Deepseek
-
-修改关键点说明：
-
-布局层级优化：
-
-python
-Toplevel
-└── main_container (Frame)  # 新增布局容器
-    ├── Label (row=0)      # 固定文字
-    └── Notebook (row=1)   # 可扩展区域
-使用中间容器main_container统一管理子组件，避免直接操作顶层窗口的布局
-
-权重配置改进：
-
-python
-main_container.grid_rowconfigure(1, weight=1)  # 仅Notebook所在行扩展
-main_container.grid_columnconfigure(0, weight=1)  # 整列横向扩展
-通过精确控制行权重，实现文字固定 + Notebook扩展的效果
-
-边距处理优化：
-
-python
-main_container.pack(expand=True, fill="both", padx=10, pady=5)
-将边距统一设置在容器外层，避免组件间的布局干扰
-
-sticky参数强化：
-
-python
-nb.grid(row=1, column=0, sticky="nsew")  # 必须设置全方向吸附
-确保Notebook在分配的空间内完全填充
-
-效果验证：
-
-当窗口缩放时，文字始终固定在左上角
-
-Notebook会随窗口尺寸变化自动扩展/收缩
-
-标签页字体已按normal_font的设定显示
-
-如果需要进一步微调文字位置，可以通过调整Label的padx/pady参数：
-
-python
-Label(...).grid(row=0, column=0, sticky="nw", pady=(0, 10))  # 下方增加10像素间距
-                                        ————————Deepseek AI
-'''
 
 
 def setting_win():
@@ -659,16 +627,18 @@ def setting_win():
     # 配置Notebook样式
     style = Style(settingWin)
     style.configure("TNotebook.Tab", font=normal_font)
-    style.configure("TButton", font=normal_font)
+    style.configure("TLabelFrame", font=normal_font)
+    style.configure("Entry", font=normal_font)
+
     
     # 添加标签页Frame
-    editior_set_frame = Frame(nb)
+    editor_set_frame = Frame(nb)
     color_set_frame = Frame(nb)
     other_set_frame = Frame(nb)
     about_frame = Frame(nb)
     
     # 添加标签页
-    nb.add(editior_set_frame, text="编辑器设置")
+    nb.add(editor_set_frame, text="编辑器设置")
     nb.add(color_set_frame, text="外观设置")
     nb.add(other_set_frame, text="杂项")
     nb.add(about_frame, text="关于")
@@ -707,11 +677,90 @@ def setting_win():
     # 确保窗口缩放时布局生效
     settingWin.rowconfigure(0, weight=1)
     settingWin.columnconfigure(0, weight=1)
-    
+
+    #---------------------------标签页内容-----------------------------
+
+    #编辑器设置
+    lbfrm = LabelFrame(editor_set_frame, text="颜色设置")
+    lbfrm.grid(row=0, column=0, padx=10, pady=10)
+    Label(lbfrm, text="字体颜色", font=normal_font).grid(row=0, column=0)
+    cscol=Entry(lbfrm,font=normal_font)                                       
+    cscol.grid(row=1, column=0, padx=10, pady=10)
+    cscoledit=Button(lbfrm, text="选择颜色", command=lambda:choose_color(settingWin,cscol))
+    cscoledit.grid(row=1, column=1, padx=10, pady=10) 
+    cscol.insert(0,txnorfg)
+    Label(lbfrm, text="背景颜色", font=normal_font).grid(row=2, column=0)
+    cscolbg=Entry(lbfrm,font=normal_font)                                       
+    cscolbg.grid(row=3, column=0, padx=10, pady=10)
+    cscolbgedit=Button(lbfrm, text="选择颜色", command=lambda:choose_color(settingWin,cscolbg,"#ffffff"))
+    cscolbgedit.grid(row=3, column=1, padx=10, pady=10) 
+    cscolbg.insert(0,txbg)
+
+    lbfrmeditfont = Labelframe(editor_set_frame, text="字体")
+    lbfrmeditfont.grid(row=1, column=0, padx=10, pady=10)
+    Label(lbfrmeditfont, text=subwin.tagwin_choose_font_family,font=normal_font).grid(row=0, column=0,pady=2)
+    fontfamc=StringVar()
+    fonts=font.families()
+    butt = Combobox(lbfrmeditfont, textvariable=fontfamc, values=fonts,font=normal_font)
+    butt.grid(row=1, column=0,pady=2)
+    butt.set(txnorfont)
+    Label(lbfrmeditfont, text=subwin.tagwin_choose_font_size,font=normal_font).grid(row=0, column=1,pady=2)
+    fsize = Spinbox(lbfrmeditfont, from_=5, to=55, state='readonly',font=normal_font)
+    fsize.grid(row=1, column=1,pady=2)
+    fsize.set(str(txnorfnsize))
+
+
+    #外观设置 
+    lbfr_color= Labelframe(color_set_frame, text="菜单设置")
+    lbfr_color.grid(row=0, column=0, padx=10, pady=10)
+    Label(lbfr_color, text="默认背景颜色",font=normal_font).grid(row=0, column=0,pady=2)
+    csmenubg = Entry(lbfr_color,font=normal_font)
+    csmenubg.grid(row=1, column=0,pady=2,)
+    csmenubg.insert(0,menu_bg)
+    csmenubgbut=Button(lbfr_color, text="选择颜色", command=lambda: choose_color(settingWin,csmenubg,menu_bg))
+    csmenubgbut.grid(row=1, column=1,pady=2)
+    Label(lbfr_color, text="默认字体颜色",font=normal_font).grid(row=2, column=0,pady=2)
+    csmenufont = Entry(lbfr_color,font=normal_font)
+    csmenufont.grid(row=3, column=0,pady=2)
+    csmenufont.insert(0,menu_fg)
+    csmenufontbut=Button(lbfr_color, text="选择颜色", command=lambda: choose_color(settingWin,csmenufont,menu_fg))
+    csmenufontbut.grid(row=3, column=1,pady=2)
+    Label(lbfr_color, text="激活时背景颜色",font=normal_font).grid(row=0, column=2,pady=2)
+    csmenuactivebg = Entry(lbfr_color,font=normal_font)
+    csmenuactivebg.grid(row=1, column=2,pady=2)
+    csmenuactivebg.insert(0,menu_active_bg)
+    csmenuactivebgbut=Button(lbfr_color, text="选择颜色", command=lambda: choose_color(settingWin,csmenuactivebg,menu_active_bg))
+    csmenuactivebgbut.grid(row=1, column=3,pady=2)
+    Label(lbfr_color, text="激活时字体颜色",font=normal_font).grid(row=2, column=2,pady=2)
+    csmenuactivefont = Entry(lbfr_color,font=normal_font)
+    csmenuactivefont.grid(row=3, column=2,pady=2)
+    csmenuactivefont.insert(0,menu_active_fg)
+    csmenuactivefontbut=Button(lbfr_color, text="选择颜色", command=lambda: choose_color(settingWin,csmenuactivefont,menu_active_fg))
+    csmenuactivefontbut.grid(row=3, column=3,pady=2)
+
+
+    Label(lbfr_color, text="菜单字体",font=normal_font).grid(row=4, column=2,pady=2,columnspan=2,sticky=W+E)
+    fnts=font.families()
+    fnt=StringVar()
+    fnt.set(menu_font)
+    csmenufntbox=Combobox(lbfr_color,font=normal_font,textvariable=fnt,values=fnts)
+    csmenufntbox.grid(row=5, column=0,pady=2,columnspan=4,sticky=W+E)
+    Label(color_set_frame, text="默认主题",font=normal_font).grid(row=1, column=0,pady=2,sticky=W)
+    themes=("light","dark")
+    thms=StringVar()
+    thms.set(thm)
+    csthmbox=Combobox(color_set_frame,font=normal_font,textvariable=thms,values=themes,state="readonly")
+    csthmbox.grid(row=2, column=0,pady=2,sticky=W)
     settingWin.mainloop()
+    
 
-
-
+def choose_color(pw,e,color='#000000'):
+    e.delete(0,END)
+    color = askcolor(parent=pw, initialcolor=color)
+    print(color)
+    e.insert(0,color[1])
+    return color[1]
+#print(askcolor())
 
 win = Tk()
 if debug_mode == 1:
@@ -723,22 +772,22 @@ win.geometry('822x505')
 #win.resizable(False,False)
 #win.overrideredirect(True)
 
+print(menu_font,str(menu_fnsize))
 
-
-text1 = scrolledtext.ScrolledText(win,font=('Consolas 12'))
+text1 = scrolledtext.ScrolledText(win,font=(txnorfont,txnorfnsize))
 text1.pack(fill=BOTH,expand=1)
 
 s1=StringVar()
 s1=lang_main.baidu
 fc=StringVar()
-fc.set("字数:"+str(len(text1.get(0.0,END))-1))
+fc.set(lang_main.footbar_letter_count+':'+str(len(text1.get(0.0,END))-1))
 savemode=StringVar()
 savemode.set(lang_main.footbar_filepath_notsaved)
 l1=Label(win,textvariable=fc,font=normal_font).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 l2=Label(win,textvariable=savemode,font=normal_font).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
 #Label(win,text=" | ",font=norfont+' 10').pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 
-menu_right = Menu(win,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu_right = Menu(win, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu_right.add_cascade(label=lang_main.copy, command=copy)
 menu_right.add_cascade(label=lang_main.paste, command=paste)
 menu_right.add_cascade(label=lang_main.selall, command=select_all)
@@ -752,7 +801,7 @@ showPopoutMenu(text1, menu_right)
 
 
 menu1 = Menu(win)
-menu1_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu1_1 = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1.add_cascade(label=lang_main.filemenu, menu=menu1_1)
 menu1_1.add_command(label=lang_main.new, command=new)
 menu1_1.add_command(label=lang_main.save, command=save)
@@ -760,7 +809,7 @@ menu1_1.add_command(label=lang_main.saveas, command=save_as)
 menu1_1.add_command(label=lang_main.open, command=open_file)
 menu1_1.add_separator()
 menu1_1.add_command(label=lang_main.exit, command=lambda:win.destroy(), accelerator='Alt+F4')
-menu2_1=Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu2_1=Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1.add_cascade(label=lang_main.editmenu,menu=menu2_1)
 menu2_1.add_command(label=lang_main.copy, command=copy, accelerator='Ctrl+C')
 menu2_1.add_command(label=lang_main.cut, command=cut, accelerator='Ctrl+X')
@@ -772,7 +821,7 @@ menu2_1.add_command(label=subwin.linksetwin_title,command=linkset_window)
 menu2_1.add_separator()
 menu2_1.add_command(label=lang_main.undo, command=undo)
 menu2_1.add_command(label=lang_main.redo, command=redo)
-menu3_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu3_1 = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1.add_cascade(label=lang_main.setmenu, menu=menu3_1)
 menu3_1.add_command(label=lang_main.fontset, command=mainwindow)
 menu3_1.add_command(label=lang_main.themeset, command=themeWindow)
@@ -780,15 +829,15 @@ menu3_1.add_command(label=lang_main.click_batch, command=run_bat)
 menu3_1.add_command(label=lang_main.run_py,command=run_pyfile)
 menu3_1.add_command(label=lang_main.lang_set,command=lanWindow)
 menu3_1.add_command(label="设置面板",command=setting_win)
-menu4_1 = Menu(menu1,tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu4_1 = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1.add_cascade(label=lang_main.winmenu,menu=menu4_1)
 menu4_1.add_command(label=lang_main.zoom,command=lambda:win.state('zoomed'))
 menu4_1.add_command(label=lang_main.iconify,command=win.iconify)
 #menu4_1.add_command(label='恢复窗口默认大小',command=nor_size)
 menu4_1.add_command(label=lang_main.setico,command=set_icon)
-menu5_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu5_1 = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1.add_cascade(label=lang_main.semenu, menu=menu5_1)
-menu6_1 = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+menu6_1 = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu5_1.add_command(label=lang_main.baidu,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.baidu))
 menu5_1.add_command(label=lang_main.bing,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.bing))
 menu5_1.add_command(label=lang_main.sougo,command=lambda:search(searchName=text1.get(SEL_FIRST,SEL_LAST),Searchwz=lang_main.sougo))
@@ -800,7 +849,7 @@ menu6_1.add_command(label=lang_main.aboutnotepad, command=about)
 menu6_1.add_command(label=lang_main.open_github, command=lambda:wb.open('https://github.com/WangHaoRan2211/Python-Notepad'))
 menu6_1.add_command(label=lang_main.comhelp, command=command_help)
 if debug_mode == 1:
-    menu_debug = Menu(menu1, tearoff=False,bg='#f0f0f0',activebackground='#90c8f6',activeforeground='#000000',font='微软雅黑 9')
+    menu_debug = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
     menu1.add_cascade(label="Debug", menu=menu_debug)
     menu_debug.add_command(label=lang_main.click_batch, command=run_bat)
 win.config(menu=menu1)
@@ -818,26 +867,11 @@ def update():
     fc.set(lang_main.footbar_letter_count+":"+str(len(text1.get(0.0,END))-1))
     win.after(100,update) 
 
-'''modpathlist=list()
-for item in os.scandir('data\\packs\\addons'):
-    if item.is_dir():
-        modpathlist.append(item.path)
-for i in modpathlist:
-    print('Loading Mod Path:'+i)
-    with open(i+'\\config.json',encoding='utf-8')as asy:
-        modname=json.loads(asy.read())['name']
-        ver=json.loads(asy.read())['version']
-    with open('version',encoding='utf-8')as fcv:
-        if fcv.readlines()[1]!=ver:
-            print('[Error]Load Mod %s Version is error,Notepad Version is %s,Mod Version is %s' %(modname,fcv.readlines()[1],ver))
-            continue
-'''
 
 
-
-
-set_theme('light')
+set_theme(thm)
 import pywinstyles
+text1.config(background=txbg,foreground=txnorfg)
 def drop_func(file):
     global save,path
     save = True
@@ -856,5 +890,10 @@ style_g = Style(win)
 style_g.configure("TNotebook.Tab", font=normal_font)
 style_g.configure("TButton", font=normal_font)
 style_g.configure("TRadiobutton", font=normal_font)
+
 win.mainloop()
+
+
+
+
 
