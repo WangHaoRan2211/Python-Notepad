@@ -132,8 +132,16 @@ def themeWindow():
                 v1 = 2
     e2 = Radiobutton(root, variable=v1, value=1, text=subwin.themewin_light, command=use_light_theme)
     e2.grid(row=1, column=0)
+    style_g = Style(win)
+    style_g.configure("TNotebook.Tab", font=normal_font)
+    style_g.configure("TButton", font=normal_font)
+    style_g.configure("TRadiobutton", font=normal_font)
     e3 = Radiobutton(root, variable=v1, value=2, text=subwin.themewin_dark, command=use_dark_theme)
     e3.grid(row=2, column=0)
+    style_g = Style(win)
+    style_g.configure("TNotebook.Tab", font=normal_font)
+    style_g.configure("TButton", font=normal_font)
+    style_g.configure("TRadiobutton", font=normal_font)
     with open('data/theme.ini', 'r+', encoding='utf-8') as th2:
         th2.write('theme=' + str(v1))
     win.mainloop()
@@ -477,7 +485,7 @@ def command_help():
             print(commandHelp)
     Label(w3,text=lang_main.comhelp,font=(norfont,17,"bold")).grid()
     Label(w3,text=commandHelp,font=normal_font).grid(row=1,column=0)
-    win.mainloop()
+    w3.mainloop()
 
 
 def set_icon():
@@ -607,6 +615,7 @@ if "--debug" in sys.argv or "-debug" in sys.argv or "-D" in sys.argv:
 def setting_win():
     global text1
     settingWin = Toplevel()
+    
     settingWin.title("设置面板")
     
     # 创建主容器统一管理布局
@@ -677,7 +686,6 @@ def setting_win():
     # 确保窗口缩放时布局生效
     settingWin.rowconfigure(0, weight=1)
     settingWin.columnconfigure(0, weight=1)
-
     #---------------------------标签页内容-----------------------------
 
     #编辑器设置
@@ -739,12 +747,16 @@ def setting_win():
     csmenuactivefontbut.grid(row=3, column=3,pady=2)
 
 
-    Label(lbfr_color, text="菜单字体",font=normal_font).grid(row=4, column=2,pady=2,columnspan=2,sticky=W+E)
+    Label(lbfr_color, text="菜单字体",font=normal_font).grid(row=4, column=0,pady=2,sticky=W)
     fnts=font.families()
     fnt=StringVar()
     fnt.set(menu_font)
     csmenufntbox=Combobox(lbfr_color,font=normal_font,textvariable=fnt,values=fnts)
-    csmenufntbox.grid(row=5, column=0,pady=2,columnspan=4,sticky=W+E)
+    csmenufntbox.grid(row=5, column=0,pady=2,columnspan=2,sticky=W+E)
+    menu_font_size=StringVar()
+    csmnfntsize=Spinbox(lbfr_color,font=normal_font,from_=2,to=20,textvariable=menu_font_size)
+    csmnfntsize.grid(row=5, column=2,pady=2,columnspan=2,sticky=W+E)
+    menu_font_size.set(menu_fnsize)
     Label(color_set_frame, text="默认主题",font=normal_font).grid(row=1, column=0,pady=2,sticky=W)
     themes=("light","dark")
     thms=StringVar()
@@ -763,6 +775,7 @@ def choose_color(pw,e,color='#000000'):
 #print(askcolor())
 
 win = Tk()
+
 if debug_mode == 1:
     win.title(lang_main.title + " - Debug Mode")
 else:
@@ -783,8 +796,10 @@ fc=StringVar()
 fc.set(lang_main.footbar_letter_count+':'+str(len(text1.get(0.0,END))-1))
 savemode=StringVar()
 savemode.set(lang_main.footbar_filepath_notsaved)
-l1=Label(win,textvariable=fc,font=normal_font).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
-l2=Label(win,textvariable=savemode,font=normal_font).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
+l1=Label(win,textvariable=fc,font=normal_font)
+l1.pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
+l2=Label(win,textvariable=savemode,font=normal_font)
+l2.pack(side=LEFT, padx=2, ipadx=2, ipady=2)
 #Label(win,text=" | ",font=norfont+' 10').pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 
 menu_right = Menu(win, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
@@ -800,7 +815,7 @@ menu_right.add_command(label='Close Window',command=lambda:win.destroy())
 showPopoutMenu(text1, menu_right)
 
 
-menu1 = Menu(win)
+menu1 = Menu(win,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1_1 = Menu(menu1, tearoff=False,bg=menu_bg,activebackground=menu_active_bg,fg=menu_fg,activeforeground=menu_active_fg,font=(menu_font,str(menu_fnsize)))
 menu1.add_cascade(label=lang_main.filemenu, menu=menu1_1)
 menu1_1.add_command(label=lang_main.new, command=new)
@@ -868,9 +883,12 @@ def update():
     win.after(100,update) 
 
 
-
-set_theme(thm)
 import pywinstyles
+if thm=='light' or thm=='dark':
+    set_theme(thm)
+else:
+    set_theme('light')
+
 text1.config(background=txbg,foreground=txnorfg)
 def drop_func(file):
     global save,path
@@ -892,6 +910,8 @@ style_g.configure("TButton", font=normal_font)
 style_g.configure("TRadiobutton", font=normal_font)
 
 win.mainloop()
+
+
 
 
 
