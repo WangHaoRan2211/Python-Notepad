@@ -304,7 +304,7 @@ def apply_font_set(b, s, c2=0):
 
 
 def about():
-    showinfo(lang_main.verinfo, '1.4.0a1-250x01-v1x\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
+    showinfo(lang_main.verinfo, '1.4.0a1-250503-v16\n\nhttps://github.com/WangHaoRan2211/Python-Notepad')
 
 
 def cut():
@@ -816,7 +816,7 @@ def setting_win():
     
     lb_b=LabelFrame(about_frame, text="关于Python-Notepad")
     lb_b.grid(row=0, column=0,pady=2,sticky=W+E)
-    Label(lb_b, text="Python-Notepad版本:"+"1.4.0a1-v250601-v16",font=normal_font).grid(row=0, column=0,pady=2,sticky=W+E)
+    Label(lb_b, text="Python-Notepad版本:"+"1.4.0a1-v250503-v16",font=normal_font).grid(row=0, column=0,pady=2,sticky=W+E)
     Label(lb_b, text="作者:"+"WP122022 2025",font=normal_font).grid(row=1, column=0,pady=2,sticky=W+E)
     Label(lb_b, text="开发时间:2025年5月",font=normal_font).grid(row=2, column=0,pady=2,sticky=W+E)
     Button(lb_b, text="历史版本",command=lambda:wb.open('https://github.com/WangHaoRan2211/Python-Notepad/releases')).grid(row=3, column=0,pady=2,sticky=W+E)
