@@ -1,17 +1,17 @@
 {
-    "language": "简体中文",
-    "theme": "light",   
+    "global_bgfont": "\u5fae\u8f6f\u96c5\u9ed1",
+    "global_bgfontsize": 10,
+    "language": "\u7b80\u4f53\u4e2d\u6587",
+    "menu_active_bgcolor": "#000000",
+    "menu_active_fgcolor": "#ffffff",
+    "menu_bgcolor": "#ffffff",
+    "menu_fgcolor": "#000000",
+    "menu_font_family": "\u5fae\u8f6f\u96c5\u9ed1",
+    "menu_font_size": 14,
+    "normal_encoding": "UTF-8",
     "textbgcolor": "#ffffff",
     "textfont_color": "#000000",
     "textfont_family": "Consolas",
     "textfont_size": 12,
-    "global_bgfont": "微软雅黑",
-    "global_bgfontsize": 10,
-    "menu_bgcolor":"#f0f0f0",
-    "menu_active_bgcolor":"#90c8f6",
-    "menu_active_fgcolor":"#000000",
-    "menu_fgcolor":"#000000",
-    "menu_font_family":"微软雅黑",
-    "menu_font_size": 9,
-    "normal_encoding": "utf-8"
+    "theme": "light"
 }

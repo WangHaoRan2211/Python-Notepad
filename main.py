@@ -1,5 +1,5 @@
 # #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
@@ -19,11 +19,11 @@ sys.dont_write_bytecode = True
 save = False
 path = ''
 debug_mode=0
-with open('data\\langs\\lang.txt',encoding='utf-8')as fh:
+with open('data\\langs\\lang.txt',encoding='UTF-8')as fh:
     l=fh.read()
 lang_list=['简体中文','繁體中文','English','Español','French','Deutsch']
 
-with open('data\\config.json',encoding='utf-8')as cfg:
+with open('data\\config.json',encoding='UTF-8')as cfg:
     config=js.load(cfg)
     print(config)
 norfont=config['global_bgfont']
@@ -38,7 +38,9 @@ menu_fnsize = config['menu_font_size']
 menu_bg=config['menu_bgcolor']
 menu_active_bg=config['menu_active_bgcolor']
 menu_fg=config['menu_fgcolor']
+normal_encoding=config['normal_encoding']
 menu_active_fg=config['menu_active_fgcolor']
+nor_lang=config['language']
 
 if l=='简体中文':
     from data.langs.zh import lang_main,subwin
@@ -74,10 +76,10 @@ for item in os.scandir('data/packs/langpacks'):
 
 for i in range(0, len(langpacklist)):
     lpath = langpacklist[i]
-    with open(lpath + '\\config.json', encoding='utf-8') as v:
+    with open(lpath + '\\config.json', encoding='UTF-8') as v:
         configjson = v.read()
     config = js.loads(configjson)
-    with open('version', encoding='utf-8') as hfg:
+    with open('version', encoding='UTF-8') as hfg:
         ver = hfg.readlines()[0]
     if config["version"] == ver:
         lang_list.append(config['langname'])
@@ -99,7 +101,7 @@ def save_as():
     tmppath = asksaveasfilename(defaultextension='.txt', filetypes=filetype, title=lang_main.saveas)
     if tmppath != '':
         path = tmppath
-        with open(path, mode='w', encoding='utf-8') as sa:
+        with open(path, mode='w', encoding='UTF-8') as sa:
             sa.write(text1.get(0.0, END))
         save = True
         savemode.set(lang_main.footbar_filepath_saved+path)
@@ -122,7 +124,7 @@ def themeWindow():
     ##root.geometry('100x75')
     root.resizable(False, False)
     v1 = IntVar()
-    with open('data/theme.ini', 'r+', encoding='utf-8') as th:
+    with open('data/theme.ini', 'r+', encoding='UTF-8') as th:
         if th.read() == '':
             th.write('theme=1')
         else:
@@ -142,7 +144,7 @@ def themeWindow():
     style_g.configure("TNotebook.Tab", font=normal_font)
     style_g.configure("TButton", font=normal_font)
     style_g.configure("TRadiobutton", font=normal_font)
-    with open('data/theme.ini', 'r+', encoding='utf-8') as th2:
+    with open('data/theme.ini', 'r+', encoding='UTF-8') as th2:
         th2.write('theme=' + str(v1))
     win.mainloop()
 
@@ -162,7 +164,7 @@ def theme():
 def save():
     global save,path
     if save == True:
-        with open(path, mode='w', encoding='utf-8') as sa:
+        with open(path, mode='w', encoding='UTF-8') as sa:
             sa.write(text1.get(0.0, END))
         savemode.set(lang_main.footbar_filepath_saved+path)
     else:
@@ -214,11 +216,11 @@ def search(searchName,Searchwz=lang_main.bing,t=0):
             elif Searchwz == lang_main.sougo:
                 wb.open('https://www.sogou.com/web?query=' + searchName)
             elif Searchwz == '360':
-                wb.open('https://www.so.com/s?ie=utf-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q=' + searchName)
+                wb.open('https://www.so.com/s?ie=UTF-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q=' + searchName)
             elif Searchwz == lang_main.bb:
                 wb.open('https://search.bilibili.com/all?keyword=' + searchName)
             elif Searchwz == lang_main.bdtb:
-                wb.open('https://tieba.baidu.com/f/search/res?ie=utf-8&qw=' + searchName)
+                wb.open('https://tieba.baidu.com/f/search/res?ie=UTF-8&qw=' + searchName)
     else:
         if Searchwz == lang_main.bing:
             wb.open('https://cn.bing.com/search?q=' + searchName)
@@ -228,11 +230,11 @@ def search(searchName,Searchwz=lang_main.bing,t=0):
             wb.open('https://www.sogou.com/web?query=' + searchName)
         elif Searchwz == '360':
             wb.open(
-                'https://www.so.com/s?ie=utf-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q=' + searchName)
+                'https://www.so.com/s?ie=UTF-8&src=hao_360so_b_cube&shb=1&hsid=23a8f4f7b4401056&ssid=&q=' + searchName)
         elif Searchwz == lang_main.bb:
             wb.open('https://search.bilibili.com/all?keyword=' + searchName)
         elif Searchwz == lang_main.bdtb:
-            wb.open('https://tieba.baidu.com/f/search/res?ie=utf-8&qw=' + searchName)
+            wb.open('https://tieba.baidu.com/f/search/res?ie=UTF-8&qw=' + searchName)
 
 
 
@@ -344,7 +346,7 @@ def lanWindow():
     l=StringVar()
     c3=Combobox(lw,textvariable=l,values=lang_list,state='readonly')
     c3.grid(row=0,column=0)
-    with open('data\\langs\\lang.txt',encoding='utf-8')as d:
+    with open('data\\langs\\lang.txt',encoding='UTF-8')as d:
         l1=d.read()
     if l1=='简体中文':
         c3.set('简体中文')
@@ -361,7 +363,7 @@ def lanWindow():
     else:
         for item in os.scandir('data/packs/langpacks'):
             if item.is_dir():
-                with open(item.path+'\\config.json',encoding='utf-8')as afg:
+                with open(item.path+'\\config.json',encoding='UTF-8')as afg:
                     a=js.loads(afg.read())
                 if l1 == a['langname']:
                     c3.set(a['langname'])
@@ -371,7 +373,7 @@ def lanWindow():
 
 
 def set_lang(lang):
-    with open('data\\langs\\lang.txt',mode='w',encoding='utf-8')as gjh:
+    with open('data\\langs\\lang.txt',mode='w',encoding='UTF-8')as gjh:
         gjh.write(lang)
 
 def show_arrow_cursor(event=None):
@@ -435,7 +437,7 @@ def command_run(command):
     if command == 'open' or command == '/open' or command == '--open' or command == '-O':
         filePath = argv[2]
         if not len(argv) >= 4:
-            fileEncode = 'utf-8'
+            fileEncode = 'UTF-8'
         else:
             fileEncode = argv[3]
         save = True
@@ -598,7 +600,7 @@ inb=0
 def run_bat():
     os.chdir(os.path.dirname(sys.argv[0]))
     global inb
-    with open('np_modules\\batedit\\batfile.bat', 'w',encoding='utf-8') as file:
+    with open('np_modules\\batedit\\batfile.bat', 'w',encoding='UTF-8') as file:
         file.write(text1.get('1.0', END))
     if inb != 0:
         del sys.modules['np_modules.batedit.bat_editor']
@@ -664,7 +666,8 @@ def setting_win():
     Label(button_frame,text="设置将于重启后生效",foreground="red",font=normal_font).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
     b1=Button(
         button_frame, 
-        text="恢复默认设置",  # 替换为实际函数
+        text="恢复默认设置",  
+        command=lambda:apply_setting()# 替换为实际函数
     ).pack(side=LEFT, padx=2, ipadx=2, ipady=2)
     
     b2=Button(
@@ -675,7 +678,24 @@ def setting_win():
     
     b3=Button(
         button_frame, 
-        text="确定",  # 替换为实际函数
+        text="确定",  
+        command=lambda:apply_setting(
+            lang=c3.get(),
+            theme=thms.get(),
+            encoding=encode.get(),
+            text_bg=cscolbg.get(),
+            text_fg=cscol.get(),
+            text_bg_font=fontfamc.get(),
+            text_bg_font_size=fsize.get(),
+            mn_font_family=fnt.get(),
+            mn_font_size=csmnfntsize.get(),
+            mn_act_bg_color=csmenuactivebg.get(),
+            mn_act_fg_color=csmenuactivefont.get(),
+            mn_bg_color=csmenubg.get(),
+            mn_fg_color=csmenufont.get(),
+
+
+        )# 替换为实际函数
     ).pack(side=RIGHT, padx=2, ipadx=2, ipady=2)
 
     # ============ 布局权重配置 ============
@@ -763,8 +783,86 @@ def setting_win():
     thms.set(thm)
     csthmbox=Combobox(color_set_frame,font=normal_font,textvariable=thms,values=themes,state="readonly")
     csthmbox.grid(row=2, column=0,pady=2,sticky=W)
+    l=StringVar()
+    Label(other_set_frame, text=lang_main.lang_set,font=normal_font).grid(row=0, column=0,pady=2,sticky=W)
+    c3=Combobox(other_set_frame,textvariable=l,values=lang_list,state='readonly',font=normal_font)
+    c3.grid(row=1, column=0,pady=2,sticky=W+E)
+    l1=nor_lang
+    if l1=='简体中文':
+        c3.set('简体中文')
+    elif l1=='繁體中文':
+        c3.set('繁體中文')
+    elif l1=='English':
+        c3.set('English')
+    elif l1=='Español':
+        c3.set('Español')
+    elif l1=='French':
+        c3.set('French')
+    elif l1=='Deutsch':
+        c3.set('Deutsch')
+    else:
+        for item in os.scandir('data/packs/langpacks'):
+            if item.is_dir():
+                with open(item.path+'\\config.json',encoding='UTF-8')as afg:
+                    a=js.loads(afg.read())
+                if l1 == a['langname']:
+                    c3.set(a['langname'])
+    Label(other_set_frame, text="默认编码设置",font=normal_font).grid(row=2, column=0,pady=2,sticky=W)
+    encode=StringVar()
+    encodes=['UTF-8','GBK','ANSI']
+    c4=Combobox(other_set_frame,textvariable=encode,values=encodes,state='readonly',font=normal_font)
+    c4.grid(row=3, column=0,pady=2,sticky=W+E)
+    encode.set(normal_encoding)
+    
+    lb_b=LabelFrame(about_frame, text="关于Python-Notepad")
+    lb_b.grid(row=0, column=0,pady=2,sticky=W+E)
+    Label(lb_b, text="Python-Notepad版本:"+"1.4.0a1-v250601-v16",font=normal_font).grid(row=0, column=0,pady=2,sticky=W+E)
+    Label(lb_b, text="作者:"+"WP122022 2025",font=normal_font).grid(row=1, column=0,pady=2,sticky=W+E)
+    Label(lb_b, text="开发时间:2025年5月",font=normal_font).grid(row=2, column=0,pady=2,sticky=W+E)
+    Button(lb_b, text="历史版本",command=lambda:wb.open('https://github.com/WangHaoRan2211/Python-Notepad/releases')).grid(row=3, column=0,pady=2,sticky=W+E)
+    Button(lb_b, text="打开Github页面",command=lambda:wb.open('https://github.com/WangHaoRan2211/Python-Notepad')).grid(row=3, column=1,pady=2,sticky=W+E)
+    if nor_lang=="简体中文":
+        Button(lb_b, text="打开作者B站",command=lambda:wb.open('https://space.bilibili.com/1957146342')).grid(row=4, column=0,pady=2,sticky=W+E)
     settingWin.mainloop()
     
+
+def apply_setting(
+    lang=nor_lang,
+    theme="light",
+    encoding="UTF-8",
+    text_bg_font="Consolas",
+    text_bg="#ffffff",
+    text_fg="#000000",
+    text_bg_font_size=12,
+    bgfont_family="微软雅黑",
+    bgfont_size=10,
+    mn_font_family="微软雅黑",
+    mn_font_size=9,
+    mn_bg_color="#f0f0f0",
+    mn_act_bg_color='#90c8f6',
+    mn_fg_color="#000000",
+    mn_act_fg_color="#000000",
+):
+    config={
+        "language":str(lang),
+        "theme":str(theme),
+        "normal_encoding":str(encoding),
+        "textfont_family":str(text_bg_font),
+        "textbgcolor":str(text_bg),
+        "textfont_color":str(text_fg),
+        "textfont_size":int(text_bg_font_size),
+        "global_bgfont":str(bgfont_family),
+        "global_bgfontsize":int(bgfont_size),
+        "menu_font_family":mn_font_family,
+        "menu_font_size":int(mn_font_size),
+        "menu_bgcolor":str(mn_bg_color),
+        "menu_active_bgcolor":str(mn_act_bg_color),
+        "menu_fgcolor":str(mn_fg_color),
+        "menu_active_fgcolor":str(mn_act_fg_color)
+    }
+    configjs=js.dumps(config,sort_keys=True, indent=4, separators=(',', ': '))
+    with open("data/config.json","w",encoding="utf-8") as f:
+        f.write(configjs)
 
 def choose_color(pw,e,color='#000000'):
     e.delete(0,END)
